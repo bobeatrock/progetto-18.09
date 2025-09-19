@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Domande Frequenti - FestaLaurea</title>
+    <meta name="description" content="Trova le risposte alle domande più frequenti su FestaLaurea, la piattaforma per prenotare feste di laurea">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .faq-item { 
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .faq-item:hover { 
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .faq-answer.open {
+            max-height: 500px;
+        }
+        .faq-toggle {
+            transition: transform 0.3s ease;
+        }
+        .faq-toggle.open {
+            transform: rotate(180deg);
+        }
+        .category-tab {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .category-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="gradient-bg text-white px-3 py-2 rounded-lg font-bold text-lg">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold gradient-text">FestaLaurea</h1>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Home</a>
+                    <a href="/venues" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Locali</a>
+                    <a href="/how-it-works.html" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Come funziona</a>
+                    <a href="/faq.html" class="text-purple-600 font-medium">FAQ</a>
+                </nav>
+                
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">
+                        Accedi
+                    </a>
+                    <a href="/" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all font-medium">
+                        Registrati
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Domande Frequenti</h1>
+            <p class="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
+                Trova rapidamente le risposte alle tue domande su FestaLaurea
+            </p>
+            
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="faqSearch" 
+                        placeholder="Cerca nelle FAQ..." 
+                        class="w-full px-6 py-4 rounded-lg text-gray-800 text-lg focus:ring-2 focus:ring-white focus:outline-none"
+                        onkeyup="searchFAQ()"
+                    >
+                    <i class="fas fa-search absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Categories -->
+    <section class="py-8 bg-white border-b">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="filterFAQ('all')" class="category-tab active px-6 py-3 rounded-lg font-medium bg-gray-100 text-gray-700">
+                    Tutte
+                </button>
+                <button onclick="filterFAQ('booking')" class="category-tab px-6 py-3 rounded-lg font-medium bg-gray-100 text-gray-700">
+                    Prenotazioni
+                </button>
+                <button onclick="filterFAQ('payment')" class="category-tab px-6 py-3 rounded-lg font-medium bg-gray-100 text-gray-700">
+                    Pagamenti
+                </button>
+                <button onclick="filterFAQ('venues')" class="category-tab px-6 py-3 rounded-lg font-medium bg-gray-100 text-gray-700">
+                    Locali
+                </button>
+                <button onclick="filterFAQ('account')" class="category-tab px-6 py-3 rounded-lg font-medium bg-gray-100 text-gray-700">
+                    Account
+                </button>
+                <button onclick="filterFAQ('support')" class="category-tab px-6 py-3 rounded-lg font-medium bg-gray-100 text-gray-700">
+                    Supporto
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div id="faqContainer" class="space-y-4">
+                    <!-- Booking FAQs -->
+                    <div class="faq-item bg-white rounded-lg" data-category="booking">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Come posso prenotare una festa di laurea?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                Prenotare è semplicissimo! Vai alla sezione "Locali", utilizza i filtri per trovare il locale perfetto 
+                                (data, numero persone, budget), scegli quello che preferisci e clicca su "Prenota". 
+                                Compila il modulo con i dettagli della festa e procedi al pagamento sicuro. 
+                                Riceverai una conferma immediata via email e SMS.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="booking">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Posso modificare o cancellare la mia prenotazione?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Sì, puoi modificare o cancellare la prenotazione accedendo alla tua dashboard. 
+                                Le condizioni sono le seguenti:
+                            </p>
+                            <ul class="text-gray-600 space-y-2">
+                                <li><strong>Modifiche:</strong> Gratuite fino a 48 ore prima dell'evento</li>
+                                <li><strong>Cancellazione:</strong> Rimborso del 90% fino a 7 giorni prima, 50% fino a 48 ore prima</li>
+                                <li><strong>Cancellazione entro 48 ore:</strong> Nessun rimborso, salvo casi eccezionali</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="booking">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Con quanto anticipo devo prenotare?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                Ti consigliamo di prenotare almeno 2-3 settimane in anticipo, specialmente durante i periodi di alta stagione 
+                                (giugno-luglio e ottobre-dicembre). Tuttavia, molti locali accettano prenotazioni anche con pochi giorni di anticipo, 
+                                soggetto a disponibilità. Prima prenoti, più scelta avrai!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Payment FAQs -->
+                    <div class="faq-item bg-white rounded-lg" data-category="payment">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Quali metodi di pagamento accettate?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Accettiamo tutti i principali metodi di pagamento:
+                            </p>
+                            <ul class="text-gray-600 space-y-2">
+                                <li><i class="fas fa-credit-card text-purple-500 mr-2"></i>Carte di credito (Visa, Mastercard, American Express)</li>
+                                <li><i class="fab fa-paypal text-purple-500 mr-2"></i>PayPal</li>
+                                <li><i class="fas fa-university text-purple-500 mr-2"></i>Bonifico bancario (per importi superiori a €500)</li>
+                                <li><i class="fas fa-mobile-alt text-purple-500 mr-2"></i>Apple Pay e Google Pay</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                Tutti i pagamenti sono protetti da crittografia SSL e processati da partner certificati PCI DSS.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="payment">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Devo pagare tutto subito o posso pagare un acconto?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                Dipende dal locale e dall'importo totale. Generalmente:
+                            </p>
+                            <ul class="text-gray-600 space-y-2 mt-4">
+                                <li><strong>Importo fino a €200:</strong> Pagamento completo richiesto</li>
+                                <li><strong>Importo €200-500:</strong> Acconto del 50%, saldo al locale</li>
+                                <li><strong>Importo oltre €500:</strong> Acconto del 30%, saldo al locale</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                Le condizioni specifiche sono sempre indicate chiaramente durante il processo di prenotazione.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="payment">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Ci sono costi nascosti o commissioni aggiuntive?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                <strong>Assolutamente no!</strong> Tutti i prezzi mostrati sono finali e comprensivi di:
+                            </p>
+                            <ul class="text-gray-600 space-y-2 mt-4">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Servizio al tavolo</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>IVA e tasse</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Commissioni di prenotazione</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Coperti</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                Gli unici costi aggiuntivi potrebbero essere per servizi extra che scegli volontariamente 
+                                (decorazioni speciali, musicista, fotografo, ecc.).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Venues FAQs -->
+                    <div class="faq-item bg-white rounded-lg" data-category="venues">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Come vengono selezionati i locali partner?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Tutti i nostri locali partner vengono accuratamente selezionati secondo criteri rigorosi:
+                            </p>
+                            <ul class="text-gray-600 space-y-2">
+                                <li><i class="fas fa-star text-yellow-500 mr-2"></i>Qualità del servizio e del cibo</li>
+                                <li><i class="fas fa-shield-alt text-green-500 mr-2"></i>Certificazioni igienico-sanitarie</li>
+                                <li><i class="fas fa-users text-blue-500 mr-2"></i>Esperienza con eventi universitari</li>
+                                <li><i class="fas fa-map-marker-alt text-red-500 mr-2"></i>Posizione strategica e accessibilità</li>
+                                <li><i class="fas fa-thumbs-up text-purple-500 mr-2"></i>Recensioni positive da altri studenti</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                Effettuiamo visite ispettive regolari e monitoriamo costantemente la qualità del servizio.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="venues">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Posso visitare il locale prima di prenotare?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                Certamente! Ti incoraggiamo a visitare il locale prima di prenotare. 
+                                Puoi contattare direttamente il locale utilizzando i contatti forniti nella scheda, 
+                                oppure il nostro team può organizzare una visita per te. 
+                                Molti locali offrono anche tour virtuali o video dettagliati degli spazi.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="venues">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Cosa succede se il locale non rispetta la prenotazione?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Questo è estremamente raro grazie ai nostri rigorosi controlli, ma se dovesse accadere:
+                            </p>
+                            <ul class="text-gray-600 space-y-2">
+                                <li><i class="fas fa-phone text-purple-500 mr-2"></i>Contatta immediatamente il nostro supporto 24/7</li>
+                                <li><i class="fas fa-search text-purple-500 mr-2"></i>Troveremo un locale alternativo equivalente o superiore</li>
+                                <li><i class="fas fa-euro-sign text-purple-500 mr-2"></i>Rimborso completo se non troviamo alternative</li>
+                                <li><i class="fas fa-gift text-purple-500 mr-2"></i>Compenso aggiuntivo per il disagio causato</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                La tua soddisfazione è la nostra priorità assoluta.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Account FAQs -->
+                    <div class="faq-item bg-white rounded-lg" data-category="account">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Devo creare un account per prenotare?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                Sì, è necessario creare un account per effettuare prenotazioni. Questo ci permette di:
+                            </p>
+                            <ul class="text-gray-600 space-y-2 mt-4">
+                                <li><i class="fas fa-shield-alt text-green-500 mr-2"></i>Garantire la sicurezza delle tue prenotazioni</li>
+                                <li><i class="fas fa-history text-blue-500 mr-2"></i>Mantenere lo storico delle tue feste</li>
+                                <li><i class="fas fa-bell text-yellow-500 mr-2"></i>Inviarti aggiornamenti e promemoria</li>
+                                <li><i class="fas fa-heart text-red-500 mr-2"></i>Salvare i tuoi locali preferiti</li>
+                                <li><i class="fas fa-user text-purple-500 mr-2"></i>Personalizzare la tua esperienza</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                La registrazione è gratuita e richiede solo pochi minuti. Puoi anche registrarti con Google o Facebook.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="account">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Posso usare FestaLaurea se non sono uno studente UNIPD?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                FestaLaurea è progettato principalmente per gli studenti dell'Università di Padova, 
+                                ma accettiamo anche:
+                            </p>
+                            <ul class="text-gray-600 space-y-2 mt-4">
+                                <li><i class="fas fa-graduation-cap text-purple-500 mr-2"></i>Studenti di altre università del Veneto</li>
+                                <li><i class="fas fa-users text-blue-500 mr-2"></i>Familiari e amici di studenti UNIPD</li>
+                                <li><i class="fas fa-birthday-cake text-pink-500 mr-2"></i>Organizzatori di eventi privati simili</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                Contatta il nostro supporto per verificare l'idoneità del tuo evento.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Support FAQs -->
+                    <div class="faq-item bg-white rounded-lg" data-category="support">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Come posso contattare il supporto clienti?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Il nostro team di supporto è sempre pronto ad aiutarti:
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">
+                                        <i class="fas fa-phone text-green-500 mr-2"></i>Telefono
+                                    </h4>
+                                    <p class="text-gray-600">+39 049 123 4567</p>
+                                    <p class="text-sm text-gray-500">Lun-Ven 9:00-18:00</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">
+                                        <i class="fas fa-envelope text-blue-500 mr-2"></i>Email
+                                    </h4>
+                                    <p class="text-gray-600">info@festalaurea.eu</p>
+                                    <p class="text-sm text-gray-500">Risposta entro 2 ore</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">
+                                        <i class="fas fa-comments text-purple-500 mr-2"></i>Chat Live
+                                    </h4>
+                                    <p class="text-gray-600">Disponibile sul sito</p>
+                                    <p class="text-sm text-gray-500">Lun-Ven 9:00-18:00</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">
+                                        <i class="fab fa-whatsapp text-green-500 mr-2"></i>WhatsApp
+                                    </h4>
+                                    <p class="text-gray-600">+39 349 123 4567</p>
+                                    <p class="text-sm text-gray-500">Solo urgenze</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item bg-white rounded-lg" data-category="support">
+                        <div class="faq-question p-6 cursor-pointer flex items-center justify-between" onclick="toggleFAQ(this)">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Offrite assistenza durante l'evento?
+                            </h3>
+                            <i class="fas fa-chevron-down faq-toggle text-purple-500"></i>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed">
+                                Sì! Il nostro servizio non si ferma alla prenotazione. Durante l'evento:
+                            </p>
+                            <ul class="text-gray-600 space-y-2 mt-4">
+                                <li><i class="fas fa-headset text-purple-500 mr-2"></i>Supporto telefonico dedicato disponibile</li>
+                                <li><i class="fas fa-user-tie text-blue-500 mr-2"></i>Referente FestaLaurea presso il locale (per eventi grandi)</li>
+                                <li><i class="fas fa-mobile-alt text-green-500 mr-2"></i>Numero di emergenza 24/7</li>
+                                <li><i class="fas fa-tools text-orange-500 mr-2"></i>Risoluzione rapida di eventuali problemi</li>
+                            </ul>
+                            <p class="text-gray-600 mt-4">
+                                Vogliamo che tu possa goderti la festa senza preoccupazioni!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No results message -->
+                <div id="noResults" class="hidden text-center py-12">
+                    <div class="max-w-md mx-auto">
+                        <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Nessun risultato trovato</h3>
+                        <p class="text-gray-600 mb-4">Prova a modificare i termini di ricerca o contatta il nostro supporto.</p>
+                        <button onclick="clearSearch()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                            Mostra tutte le FAQ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Non hai trovato la risposta?</h2>
+            <p class="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                Il nostro team di supporto è sempre pronto ad aiutarti. Contattaci e risolveremo ogni tuo dubbio!
+            </p>
+            <div class="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
+                <a href="mailto:info@festalaurea.eu" class="inline-block bg-white text-purple-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition-all font-bold">
+                    <i class="fas fa-envelope mr-2"></i>Invia Email
+                </a>
+                <a href="tel:+390491234567" class="inline-block border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-purple-600 transition-all font-bold">
+                    <i class="fas fa-phone mr-2"></i>Chiama Ora
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="gradient-bg text-white px-3 py-2 rounded-lg font-bold text-lg">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">FestaLaurea</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        La piattaforma dedicata agli studenti dell'Università di Padova 
+                        per organizzare feste di laurea indimenticabili.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Link Utili</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="/venues" class="hover:text-white transition-colors">Locali</a></li>
+                        <li><a href="/how-it-works.html" class="hover:text-white transition-colors">Come funziona</a></li>
+                        <li><a href="/faq.html" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Supporto</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="mailto:info@festalaurea.eu" class="hover:text-white transition-colors">info@festalaurea.eu</a></li>
+                        <li><a href="tel:+390491234567" class="hover:text-white transition-colors">+39 049 123 4567</a></li>
+                        <li><span>Lun-Ven 9:00-18:00</span></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Seguici</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 FestaLaurea. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ functionality
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const toggle = element.querySelector('.faq-toggle');
+            const isOpen = answer.classList.contains('open');
+            
+            // Close all other FAQs
+            document.querySelectorAll('.faq-answer.open').forEach(item => {
+                if (item !== answer) {
+                    item.classList.remove('open');
+                    item.previousElementSibling.querySelector('.faq-toggle').classList.remove('open');
+                }
+            });
+            
+            // Toggle current FAQ
+            if (isOpen) {
+                answer.classList.remove('open');
+                toggle.classList.remove('open');
+            } else {
+                answer.classList.add('open');
+                toggle.classList.add('open');
+            }
+        }
+
+        // Category filtering
+        function filterFAQ(category) {
+            const faqItems = document.querySelectorAll('.faq-item');
+            const tabs = document.querySelectorAll('.category-tab');
+            
+            // Update active tab
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide FAQ items
+            faqItems.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Close all open answers
+            document.querySelectorAll('.faq-answer.open').forEach(answer => {
+                answer.classList.remove('open');
+                answer.previousElementSibling.querySelector('.faq-toggle').classList.remove('open');
+            });
+        }
+
+        // Search functionality
+        function searchFAQ() {
+            const searchTerm = document.getElementById('faqSearch').value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+            const noResults = document.getElementById('noResults');
+            let hasResults = false;
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question h3').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer p').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    hasResults = true;
+                    
+                    // Highlight search terms
+                    if (searchTerm) {
+                        highlightSearchTerm(item, searchTerm);
+                    } else {
+                        removeHighlight(item);
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Show/hide no results message
+            if (hasResults || !searchTerm) {
+                noResults.classList.add('hidden');
+            } else {
+                noResults.classList.remove('hidden');
+            }
+            
+            // Reset category filter when searching
+            if (searchTerm) {
+                document.querySelectorAll('.category-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+            }
+        }
+
+        function highlightSearchTerm(item, term) {
+            const question = item.querySelector('.faq-question h3');
+            const answer = item.querySelector('.faq-answer p');
+            
+            [question, answer].forEach(element => {
+                const text = element.textContent;
+                const regex = new RegExp(`(${term})`, 'gi');
+                element.innerHTML = text.replace(regex, '<span class="search-highlight">$1</span>');
+            });
+        }
+
+        function removeHighlight(item) {
+            const question = item.querySelector('.faq-question h3');
+            const answer = item.querySelector('.faq-answer p');
+            
+            [question, answer].forEach(element => {
+                element.innerHTML = element.textContent;
+            });
+        }
+
+        function clearSearch() {
+            document.getElementById('faqSearch').value = '';
+            searchFAQ();
+            
+            // Reset to "all" category
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('.category-tab').classList.add('active');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up search input
+            document.getElementById('faqSearch').addEventListener('input', searchFAQ);
+        });
+    </script>
+</body>
+</html>

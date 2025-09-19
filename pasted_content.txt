@@ -1,0 +1,39 @@
+2025-09-18 13:37:28 UTC [apache][core:info] [pid 14198:tid 14198] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues, referer: https://festalaurea.eu/
+‮
+2025-09-18 13:36:25 UTC [apache][core:info] [pid 18551:tid 18551] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues, referer: https://festalaurea.eu/
+‮
+2025-09-18 13:36:06 UTC [apache][core:info] [pid 18551:tid 18551] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues/featured, referer: https://festalaurea.eu/
+‮
+2025-09-18 13:36:06 UTC [apache][core:info] [pid 3933:tid 3933] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/favicon.ico, referer: https://festalaurea.eu/
+‮
+2025-09-18 06:41:11 UTC [apache][core:info] [pid 70462:tid 70462] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues/featured, referer: https://festalaurea.eu/
+‮
+2025-09-18 06:41:11 UTC [apache][core:info] [pid 66984:tid 66984] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/favicon.ico, referer: https://festalaurea.eu/
+‮
+2025-09-17 20:48:14 UTC [apache][core:info] [pid 48437:tid 48437] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:48:12 UTC [apache][core:info] [pid 82733:tid 82733] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues/featured, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:48:07 UTC [apache][core:info] [pid 45503:tid 45503] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues/search.php
+‮
+2025-09-17 20:45:54 UTC [apache][core:info] [pid 9602:tid 9602] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/auth/register, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:44:45 UTC [apache][core:info] [pid 57872:tid 57872] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:44:42 UTC [apache][core:info] [pid 58363:tid 58363] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:44:27 UTC [apache][core:info] [pid 58444:tid 58444] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/auth/register, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:44:24 UTC [apache][core:info] [pid 93958:tid 93958] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:44:20 UTC [apache][core:info] [pid 58363:tid 58363] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/auth/register, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:44:04 UTC [apache][core:info] [pid 58444:tid 58444] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/auth/login, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:44:00 UTC [apache][core:info] [pid 57872:tid 57872] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues/featured, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 20:41:11 UTC [apache][core:info] [pid 57872:tid 57872] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/api/venues/search.php
+‮
+2025-09-17 15:52:27 UTC [apache][core:info] [pid 92794:tid 92794] [client 79.17.178.128:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/favicon.ico, referer: https://festalaurea.eu/index.html
+‮
+2025-09-17 15:41:42 UTC [apache][core:info] [pid 79086:tid 79086] [client 18.209.93.158:12148] AH00128: File does not exist: /home/u3129-cuezbob91ddz/www/festalaurea.eu/public_html/favicon.ico, referer: https://festalaurea.eu/index.html

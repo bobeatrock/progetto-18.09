@@ -1,0 +1,453 @@
+// ========================================
+// FESTALAUREA - MAIN APPLICATION JS
+// ========================================
+
+// API Configuration
+const API_URL = 'http://localhost/festalaurea/api';
+const STRIPE_PUBLIC_KEY = 'pk_test_51234567890';
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+    loadVenues();
+    setupEventListeners();
+    checkAuthStatus();
+});
+
+// Initialize App
+function initializeApp() {
+    // Set minimum date to today for date inputs
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    const today = new Date().toISOString().split('T')[0];
+    dateInputs.forEach(input => {
+        input.min = today;
+    });
+
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+}
+
+// Check Authentication Status
+function checkAuthStatus() {
+    const token = localStorage.getItem('auth_token');
+    const user = localStorage.getItem('user_data');
+    
+    if (token && user) {
+        // User is logged in
+        updateUIForLoggedInUser(JSON.parse(user));
+    }
+}
+
+// Update UI for Logged In User
+function updateUIForLoggedInUser(user) {
+    const navLinks = document.querySelector('.navbar-nav');
+    if (navLinks) {
+        const loginBtn = navLinks.querySelector('.btn-outline-primary');
+        const registerBtn = navLinks.querySelector('.btn-primary');
+        
+        if (loginBtn && registerBtn) {
+            loginBtn.innerHTML = `<i class="bi bi-person-circle"></i> ${user.name}`;
+            loginBtn.onclick = () => window.location.href = 'dashboard.html';
+            
+            registerBtn.innerHTML = 'Dashboard';
+            registerBtn.href = 'dashboard.html';
+        }
+    }
+}
+
+// Setup Event Listeners
+function setupEventListeners() {
+    // Search Form
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', handleSearch);
+    }
+
+    // Login Form
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+
+    // Register Form
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
+}
+
+// Handle Search
+async function handleSearch(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const searchParams = {
+        date: formData.get('searchDate'),
+        guests: formData.get('searchGuests'),
+        budget: formData.get('searchBudget')
+    };
+    
+    // Store search params and redirect to venues page
+    localStorage.setItem('searchParams', JSON.stringify(searchParams));
+    window.location.href = 'venues.html';
+}
+
+// Load Venues
+async function loadVenues() {
+    const venuesGrid = document.getElementById('venuesGrid');
+    if (!venuesGrid) return;
+    
+    try {
+        const response = await fetch(`${API_URL}/venues.php`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayVenues(data.venues.slice(0, 6)); // Show first 6 venues
+        }
+    } catch (error) {
+        console.error('Error loading venues:', error);
+        // Display mock data for demo
+        displayMockVenues();
+    }
+}
+
+// Display Venues
+function displayVenues(venues) {
+    const venuesGrid = document.getElementById('venuesGrid');
+    if (!venuesGrid) return;
+    
+    venues.forEach(venue => {
+        const venueCard = createVenueCard(venue);
+        venuesGrid.appendChild(venueCard);
+    });
+}
+
+// Display Mock Venues (for demo)
+function displayMockVenues() {
+    const mockVenues = [
+        {
+            id: 1,
+            name: 'Ristorante La Torre',
+            type: 'Ristorante',
+            price_range: '€€€',
+            capacity: '20-80',
+            rating: 4.8,
+            reviews: 124,
+            image: 'assets/images/venue1.jpg',
+            location: 'Centro Storico, Roma'
+        },
+        {
+            id: 2,
+            name: 'The Crown Pub',
+            type: 'Pub',
+            price_range: '€€',
+            capacity: '30-100',
+            rating: 4.6,
+            reviews: 89,
+            image: 'assets/images/venue2.jpg',
+            location: 'Trastevere, Roma'
+        },
+        {
+            id: 3,
+            name: 'Villa Borghese',
+            type: 'Villa',
+            price_range: '€€€€',
+            capacity: '50-200',
+            rating: 4.9,
+            reviews: 156,
+            image: 'assets/images/venue3.jpg',
+            location: 'Villa Borghese, Roma'
+        },
+        {
+            id: 4,
+            name: 'Terrazza Gianicolo',
+            type: 'Rooftop',
+            price_range: '€€€',
+            capacity: '40-120',
+            rating: 4.7,
+            reviews: 98,
+            image: 'assets/images/venue4.jpg',
+            location: 'Gianicolo, Roma'
+        },
+        {
+            id: 5,
+            name: 'Osteria del Borgo',
+            type: 'Osteria',
+            price_range: '€€',
+            capacity: '20-60',
+            rating: 4.5,
+            reviews: 67,
+            image: 'assets/images/venue5.jpg',
+            location: 'Testaccio, Roma'
+        },
+        {
+            id: 6,
+            name: 'Club Piper',
+            type: 'Discoteca',
+            price_range: '€€€',
+            capacity: '100-300',
+            rating: 4.4,
+            reviews: 203,
+            image: 'assets/images/venue6.jpg',
+            location: 'Via Tagliamento, Roma'
+        }
+    ];
+    
+    displayVenues(mockVenues);
+}
+
+// Create Venue Card
+function createVenueCard(venue) {
+    const col = document.createElement('div');
+    col.className = 'col-lg-4 col-md-6';
+    
+    col.innerHTML = `
+        <div class="card h-100">
+            <div class="position-relative">
+                <img src="${venue.image || 'https://via.placeholder.com/400x250'}" class="card-img-top" alt="${venue.name}" style="height: 200px; object-fit: cover;">
+                <span class="position-absolute top-0 end-0 badge bg-primary m-2">${venue.type}</span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">${venue.name}</h5>
+                <p class="text-muted mb-2">
+                    <i class="bi bi-geo-alt"></i> ${venue.location}
+                </p>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary fw-bold">${venue.price_range}</span>
+                    <span class="text-muted">
+                        <i class="bi bi-people"></i> ${venue.capacity} ospiti
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <span class="text-warning">
+                            ${'<i class="bi bi-star-fill"></i>'.repeat(Math.floor(venue.rating))}
+                        </span>
+                        <span class="ms-1">${venue.rating}</span>
+                    </div>
+                    <small class="text-muted">(${venue.reviews} recensioni)</small>
+                </div>
+                <button class="btn btn-primary w-100" onclick="viewVenue(${venue.id})">
+                    Vedi Dettagli
+                </button>
+            </div>
+        </div>
+    `;
+    
+    return col;
+}
+
+// View Venue Details
+function viewVenue(venueId) {
+    window.location.href = `venue-details.html?id=${venueId}`;
+}
+
+// Open Login Modal
+function openLoginModal() {
+    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    loginModal.show();
+}
+
+// Handle Login
+async function handleLogin(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const credentials = {
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
+    
+    try {
+        const response = await fetch(`${API_URL}/auth/login.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Store auth token and user data
+            localStorage.setItem('auth_token', data.token);
+            localStorage.setItem('user_data', JSON.stringify(data.user));
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        } else {
+            showAlert('danger', data.message || 'Credenziali non valide');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        // For demo purposes, simulate successful login
+        simulateLogin();
+    }
+}
+
+// Simulate Login (for demo)
+function simulateLogin() {
+    const mockUser = {
+        id: 1,
+        name: 'Marco Rossi',
+        email: 'marco.rossi@email.com',
+        type: 'student'
+    };
+    
+    localStorage.setItem('auth_token', 'mock_token_123456');
+    localStorage.setItem('user_data', JSON.stringify(mockUser));
+    
+    showAlert('success', 'Accesso effettuato con successo!');
+    setTimeout(() => {
+        window.location.href = 'dashboard.html';
+    }, 1500);
+}
+
+// Login with Google
+function loginWithGoogle() {
+    // Initialize Google Sign-In
+    showAlert('info', 'Google Login in configurazione...');
+    // In production, implement actual Google OAuth
+    simulateLogin();
+}
+
+// Login with Facebook
+function loginWithFacebook() {
+    // Initialize Facebook Login
+    showAlert('info', 'Facebook Login in configurazione...');
+    // In production, implement actual Facebook OAuth
+    simulateLogin();
+}
+
+// Register with Google
+function registerWithGoogle() {
+    loginWithGoogle();
+}
+
+// Register with Facebook
+function registerWithFacebook() {
+    loginWithFacebook();
+}
+
+// Start Search
+function startSearch() {
+    document.getElementById('searchDate').focus();
+}
+
+// Play Demo Video
+function playDemo() {
+    showAlert('info', 'Video demo in arrivo...');
+}
+
+// Open Chat
+function openChat() {
+    showAlert('success', 'Chat attivata! Un operatore ti risponderà a breve.');
+}
+
+// Toggle Chat
+function toggleChat() {
+    openChat();
+}
+
+// Show Alert
+function showAlert(type, message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+    alertDiv.style.zIndex = '9999';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+// Toggle Business Fields in Registration
+function toggleBusinessFields() {
+    const accountType = document.getElementById('accountType').value;
+    const businessFields = document.getElementById('businessFields');
+    
+    if (accountType === 'venue') {
+        businessFields.style.display = 'block';
+    } else {
+        businessFields.style.display = 'none';
+    }
+}
+
+// Logout
+function logout() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
+    window.location.href = 'index.html';
+}
+
+// Format Currency
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('it-IT', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(amount);
+}
+
+// Format Date
+function formatDate(date) {
+    return new Intl.DateTimeFormat('it-IT', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date(date));
+}
+
+// Debounce Function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Lazy Load Images
+function lazyLoadImages() {
+    const images = document.querySelectorAll('img[data-src]');
+    
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+                observer.unobserve(img);
+            }
+        });
+    });
+    
+    images.forEach(img => imageObserver.observe(img));
+}
+
+// Export functions for global use
+window.openLoginModal = openLoginModal;
+window.loginWithGoogle = loginWithGoogle;
+window.loginWithFacebook = loginWithFacebook;
+window.registerWithGoogle = registerWithGoogle;
+window.registerWithFacebook = registerWithFacebook;
+window.viewVenue = viewVenue;
+window.startSearch = startSearch;
+window.playDemo = playDemo;
+window.openChat = openChat;
+window.toggleChat = toggleChat;
+window.toggleBusinessFields = toggleBusinessFields;
+window.logout = logout;

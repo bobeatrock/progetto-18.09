@@ -1,0 +1,19 @@
+79.17.178.128 festalaurea.eu - [18/Sep/2025:13:37:28 +0000] "GET /api/venues HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | 0.002 0.002 0.002 EXPIRED 0 NC:000000 UP:- cdnreq europe-west3-rp7g
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:13:36:59 +0000] "GET /api/venues HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | - - 0.000 HIT 0 NC:000000 UP:- cdnreq europe-west3-rp7g
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:13:36:54 +0000] "GET /api/venues HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | - - 0.000 HIT 0 NC:000000 UP:- cdnreq europe-west3-rp7g
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:13:36:25 +0000] "GET /api/venues HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | 0.013 0.014 0.015 EXPIRED 0 NC:000000 UP:- cdnreq europe-west3-rp7g
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:13:36:06 +0000] "GET /favicon.ico HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | 0.003 0.004 0.004 EXPIRED 0 NC:000000 UP:- cdnreq europe-west3-rp7g
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:13:36:06 +0000] "GET /api/venues/featured HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | 0.004 0.005 0.004 EXPIRED 0 NC:000000 UP:- cdnreq europe-west3-rp7g
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:13:36:05 +0000] "GET / HTTP/1.1" 200 11884 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | 0.008 0.008 0.008 EXPIRED 0 NC:000000 UP:- cdnreq europe-west3-rp7g
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:06:41:11 +0000] "GET /favicon.ico HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | 0.003 0.003 0.003 MISS 0 NC:000000 UP:- cdnreq europe-west3-lw8k
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:06:41:11 +0000] "GET /api/venues/featured HTTP/1.1" 404 19371 "https://festalaurea.eu/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | 0.007 0.008 0.008 EXPIRED 0 NC:000000 UP:- cdnreq europe-west3-lw8k
+‮
+79.17.178.128 festalaurea.eu - [18/Sep/2025:06:41:11 +0000] "GET / HTTP/1.1" 200 11884 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" | TLSv1.3 | - - 0.000 HIT 0 NC:000000 UP:- cdnreq europe-west3-lw8k

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestaLaurea - Prenota la tua festa di laurea</title>
+    <meta name="description" content="Prenota la tua festa di laurea nei migliori locali di Padova. Ricerca avanzata, prezzi trasparenti e prenotazione istantanea.">
+    <meta name="keywords" content="festa laurea Padova, ristoranti laurea, locali feste Padova, prenotazione festa, università Padova">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="FestaLaurea - Prenota la tua festa di laurea">
+    <meta property="og:description" content="I migliori locali per feste di laurea a Padova">
+    <meta property="og:image" content="/assets/images/og-image.jpg">
+    <meta property="og:url" content="https://festalaurea.eu">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hover-scale { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-scale:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        .fade-in { opacity: 0; animation: fadeIn 0.6s ease-in forwards; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .slide-in { transform: translateX(-100%); animation: slideIn 0.6s ease-out forwards; }
+        @keyframes slideIn { to { transform: translateX(0); } }
+        
+        .glass-effect { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-shadow { 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .mobile-menu { 
+            transform: translateX(100%); 
+            transition: transform 0.3s ease-in-out; 
+        }
+        .mobile-menu.open { transform: translateX(0); }
+        
+        .social-btn {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        .google-btn { background: #4285f4; }
+        .facebook-btn { background: #1877f2; }
+        
+        .rating-stars { color: #fbbf24; }
+        .section-content { min-height: 400px; }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem !important; line-height: 1.2; }
+            .hero-subtitle { font-size: 1.1rem !important; }
+            .search-grid { grid-template-columns: 1fr !important; gap: 1rem; }
+            .feature-grid { grid-template-columns: 1fr !important; }
+            .venue-grid { grid-template-columns: 1fr !important; }
+            .dashboard-nav { flex-direction: column; gap: 0.5rem; }
+            .dashboard-tab { width: 100%; text-align: center; }
+            .mobile-padding { padding: 1rem !important; }
+            .mobile-text-sm { font-size: 0.875rem !important; }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2rem !important; }
+            .container { padding-left: 1rem; padding-right: 1rem; }
+        }
+        
+        /* Touch-friendly buttons */
+        .btn-touch {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Improved focus states for accessibility */
+        .focus-ring:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+    
+    <!-- Header -->
+    <header class="glass-effect fixed w-full top-0 z-50 border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="gradient-bg text-white px-3 py-2 rounded-lg font-bold text-lg">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold gradient-text">FestaLaurea</h1>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#" onclick="showSection('home')" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Home</a>
+                    <a href="#" onclick="showSection('venues')" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Locali</a>
+                    <a href="#" onclick="showSection('how-it-works')" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Come funziona</a>
+                    <a href="#" onclick="showSection('faq')" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">FAQ</a>
+                </nav>
+                
+                <!-- Desktop Auth Buttons -->
+                <div class="hidden md:flex items-center space-x-3">
+                    <div id="auth-buttons" class="flex items-center space-x-3">
+                        <button onclick="showModal('loginModal')" class="text-gray-600 hover:text-purple-600 transition-colors font-medium btn-touch focus-ring">
+                            Accedi
+                        </button>
+                        <button onclick="showModal('registerModal')" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all font-medium btn-touch focus-ring">
+                            Registrati
+                        </button>
+                    </div>
+                    <div id="user-menu" class="hidden">
+                        <div class="relative">
+                            <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-purple-600 transition-colors btn-touch focus-ring">
+                                <img id="user-avatar" src="" alt="Avatar" class="w-8 h-8 rounded-full hidden">
+                                <span id="user-name">Mario Rossi</span>
+                                <i class="fas fa-chevron-down text-sm"></i>
+                            </button>
+                            <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 glass-effect rounded-lg shadow-lg py-2 z-10">
+                                <a href="#" onclick="showSection('dashboard')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                                </a>
+                                <a href="/venue-management.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
+                                    <i class="fas fa-store mr-2"></i>Gestione Locale
+                                </a>
+                                <hr class="my-1">
+                                <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden text-gray-600 hover:text-purple-600 transition-colors btn-touch focus-ring">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 h-full w-80 max-w-full glass-effect z-50 md:hidden">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-bold gradient-text">Menu</h2>
+                <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-purple-600 transition-colors btn-touch focus-ring">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <nav class="space-y-4 mb-8">
+                <a href="#" onclick="showSection('home'); toggleMobileMenu();" class="block text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
+                    <i class="fas fa-home mr-3"></i>Home
+                </a>
+                <a href="#" onclick="showSection('venues'); toggleMobileMenu();" class="block text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
+                    <i class="fas fa-store mr-3"></i>Locali
+                </a>
+                <a href="#" onclick="showSection('how-it-works'); toggleMobileMenu();" class="block text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
+                    <i class="fas fa-question-circle mr-3"></i>Come funziona
+                </a>
+                <a href="#" onclick="showSection('faq'); toggleMobileMenu();" class="block text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
+                    <i class="fas fa-info-circle mr-3"></i>FAQ
+                </a>
+            </nav>
+            
+            <div id="mobile-auth-buttons" class="space-y-3">
+                <button onclick="showModal('loginModal'); toggleMobileMenu();" class="w-full text-left text-gray-700 hover:text-purple-600 transition-colors font-medium py-2 btn-touch focus-ring">
+                    <i class="fas fa-sign-in-alt mr-3"></i>Accedi
+                </button>
+                <button onclick="showModal('registerModal'); toggleMobileMenu();" class="w-full gradient-bg text-white px-4 py-3 rounded-lg hover:opacity-90 transition-all font-medium btn-touch focus-ring">
+                    <i class="fas fa-user-plus mr-2"></i>Registrati
+                </button>
+            </div>
+            
+            <div id="mobile-user-menu" class="hidden space-y-3">
+                <div class="flex items-center space-x-3 mb-4 p-3 bg-purple-50 rounded-lg">
+                    <img id="mobile-user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full hidden">
+                    <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <span id="mobile-user-name" class="font-medium text-gray-800">Mario Rossi</span>
+                </div>
+                <a href="#" onclick="showSection('dashboard'); toggleMobileMenu();" class="block text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
+                    <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                </a>
+                <a href="/venue-management.html" class="block text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
+                    <i class="fas fa-store mr-3"></i>Gestione Locale
+                </a>
+                <button onclick="logout(); toggleMobileMenu();" class="w-full text-left text-red-600 hover:text-red-700 transition-colors font-medium py-2 btn-touch focus-ring">
+                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- HOME SECTION -->
+        <section id="home" class="section-content">
+            <!-- Hero Section -->
+            <div class="gradient-bg text-white py-16 md:py-20">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="hero-title text-4xl md:text-5xl font-bold mb-6 floating">
+                        🎓 La tua festa di laurea perfetta
+                    </h2>
+                    <p class="hero-subtitle text-lg md:text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                        Prenota nei migliori locali di Padova con un click. Facile, veloce e sicuro.
+                    </p>
+                    
+                    <!-- Search Bar -->
+                    <div class="glass-effect rounded-xl p-4 md:p-6 max-w-4xl mx-auto shadow-2xl">
+                        <div class="search-grid grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Data festa</label>
+                                <input type="date" id="searchDate" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all btn-touch focus-ring">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Persone</label>
+                                <select id="searchGuests" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all btn-touch focus-ring">
+                                    <option value="">Seleziona</option>
+                                    <option value="10-20">10-20 persone</option>
+                                    <option value="20-30">20-30 persone</option>
+                                    <option value="30-50">30-50 persone</option>
+                                    <option value="50+">50+ persone</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Budget</label>
+                                <select id="searchBudget" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all btn-touch focus-ring">
+                                    <option value="">Qualsiasi</option>
+                                    <option value="0-25">€0-25 a persona</option>
+                                    <option value="25-40">€25-40 a persona</option>
+                                    <option value="40-60">€40-60 a persona</option>
+                                    <option value="60+">€60+ a persona</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="searchVenues()" class="w-full gradient-bg text-white py-3 rounded-lg hover:opacity-90 font-bold transition-all btn-touch focus-ring">
+                                    <i class="fas fa-search mr-2"></i>Cerca Locali
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Features Section -->
+            <div class="py-16 md:py-20 bg-white">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-12 md:mb-16">
+                        <h3 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Perché scegliere FestaLaurea?</h3>
+                        <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                            La piattaforma più completa per organizzare la tua festa di laurea
+                        </p>
+                    </div>
+                    
+                    <div class="feature-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center p-6 hover-scale card-shadow bg-white rounded-xl">
+                            <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-search text-white text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3 text-gray-800">Ricerca Avanzata</h4>
+                            <p class="text-gray-600 leading-relaxed">
+                                Trova il locale perfetto con filtri per data, budget, numero persone e dipartimento universitario
+                            </p>
+                        </div>
+                        
+                        <div class="text-center p-6 hover-scale card-shadow bg-white rounded-xl">
+                            <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-shield-alt text-white text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3 text-gray-800">Pagamento Sicuro</h4>
+                            <p class="text-gray-600 leading-relaxed">
+                                Prenota con deposito online sicuro. Pagamento protetto e conferma immediata
+                            </p>
+                        </div>
+                        
+                        <div class="text-center p-6 hover-scale card-shadow bg-white rounded-xl">
+                            <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-star text-white text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3 text-gray-800">Solo Locali Verificati</h4>
+                            <p class="text-gray-600 leading-relaxed">
+                                Collaboriamo solo con i migliori locali di Padova, verificati e con recensioni autentiche
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Popular Venues -->
+            <div class="py-16 md:py-20 bg-gray-50">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-12 md:mb-16">
+                        <h3 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Locali in Evidenza</h3>
+                        <p class="text-lg md:text-xl text-gray-600">I più amati dagli studenti di Padova</p>
+                    </div>
+                    
+                    <div id="featuredVenues" class="venue-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        <!-- Venues will be loaded here -->
+                    </div>
+                    
+                    <div class="text-center mt-12">
+                        <button onclick="showSection('venues')" class="gradient-bg text-white px-8 py-3 rounded-lg hover:opacity-90 font-bold transition-all btn-touch focus-ring">
+                            Vedi Tutti i Locali
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- VENUES SECTION -->
+        <section id="venues" class="section-content hidden py-16 md:py-20">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tutti i Locali</h2>
+                    <p class="text-lg text-gray-600">Scopri i migliori locali per la tua festa di laurea</p>
+                </div>
+                
+                <!-- Filters -->
+                <div class="glass-effect rounded-xl p-4 md:p-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Tipo Locale</label>
+                            <select id="filterType" onchange="filterVenues()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 btn-touch focus-ring">
+                                <option value="">Tutti</option>
+                                <option value="restaurant">Ristorante</option>
+                                <option value="pub">Pub</option>
+                                <option value="club">Club</option>
+                                <option value="outdoor">Spazio Esterno</option>
+                                <option value="hotel">Hotel</option>
+                                <option value="agriturismo">Agriturismo</option>
+                                <option value="villa">Villa</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Zona</label>
+                            <select id="filterZone" onchange="filterVenues()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 btn-touch focus-ring">
+                                <option value="">Tutte</option>
+                                <option value="centro">Centro Storico</option>
+                                <option value="stazione">Zona Stazione</option>
+                                <option value="prato">Prato della Valle</option>
+                                <option value="arcella">Arcella</option>
+                                <option value="guizza">Guizza</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Prezzo</label>
+                            <select id="filterPrice" onchange="filterVenues()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 btn-touch focus-ring">
+                                <option value="">Qualsiasi</option>
+                                <option value="0-25">€0-25</option>
+                                <option value="25-40">€25-40</option>
+                                <option value="40-60">€40-60</option>
+                                <option value="60+">€60+</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Capacità</label>
+                            <select id="filterCapacity" onchange="filterVenues()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 btn-touch focus-ring">
+                                <option value="">Qualsiasi</option>
+                                <option value="10-20">10-20 persone</option>
+                                <option value="20-30">20-30 persone</option>
+                                <option value="30-50">30-50 persone</option>
+                                <option value="50+">50+ persone</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="venuesGrid" class="venue-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    <!-- Venues will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="glass-effect rounded-xl p-6 md:p-8 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Accedi</h3>
+                <button onclick="hideModal('loginModal')" class="text-gray-500 hover:text-gray-700 btn-touch focus-ring">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Social Login Buttons -->
+            <div class="space-y-3 mb-6">
+                <button onclick="loginWithGoogle()" class="social-btn google-btn w-full text-white py-3 rounded-lg font-medium btn-touch focus-ring">
+                    <i class="fab fa-google mr-2"></i>Continua con Google
+                </button>
+                <button onclick="loginWithFacebook()" class="social-btn facebook-btn w-full text-white py-3 rounded-lg font-medium btn-touch focus-ring">
+                    <i class="fab fa-facebook-f mr-2"></i>Continua con Facebook
+                </button>
+            </div>
+            
+            <div class="relative mb-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">oppure</span>
+                </div>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="loginEmail" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 btn-touch focus-ring">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="loginPassword" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 btn-touch focus-ring">
+                </div>
+                <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg hover:opacity-90 font-bold transition-all btn-touch focus-ring">
+                    Accedi
+                </button>
+            </form>
+            
+            <p class="text-center text-gray-600 mt-4 mobile-text-sm">
+                Non hai un account? 
+                <button onclick="hideModal('loginModal'); showModal('registerModal');" class="text-purple-600 hover:text-purple-700 font-medium">
+                    Registrati qui
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="glass-effect rounded-xl p-6 md:p-8 w-full max-w-md max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Registrati</h3>
+                <button onclick="hideModal('registerModal')" class="text-gray-500 hover:text-gray-700 btn-touch focus-ring">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Social Login Buttons -->
+            <div class="space-y-3 mb-6">
+                <button onclick="loginWithGoogle()" class="social-btn google-btn w-full text-white py-3 rounded-lg font-medium btn-touch focus-ring">
+                    <i class="fab fa-google mr-2"></i>Registrati con Google
+                </button>
+                <button onclick="loginWithFacebook()" class="social-btn facebook-btn w-full text-white py-3 rounded-lg font-medium btn-touch focus-ring">
+                    <i class="fab fa-facebook-f mr-2"></i>Registrati con Facebook
+                </button>
+            </div>
+            
+            <div class="relative mb-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">oppure</span>
+                </div>
+            </div>
+            
+            <form id="registerForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Nome Completo</label>
+                    <input type="text" id="registerName" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 btn-touch focus-ring">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email Universitaria</label>
+                    <input type="email" id="registerEmail" required placeholder="nome.cognome@studenti.unipd.it" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 btn-touch focus-ring">
+                    <p class="text-xs text-gray-500 mt-1">Usa la tua email universitaria @studenti.unipd.it</p>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="registerPassword" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 btn-touch focus-ring">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Dipartimento</label>
+                    <select id="registerDepartment" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 btn-touch focus-ring">
+                        <option value="">Seleziona dipartimento</option>
+                        <option value="ingegneria">Ingegneria</option>
+                        <option value="medicina">Medicina</option>
+                        <option value="economia">Economia</option>
+                        <option value="lettere">Lettere e Filosofia</option>
+                        <option value="scienze">Scienze</option>
+                        <option value="giurisprudenza">Giurisprudenza</option>
+                        <option value="psicologia">Psicologia</option>
+                        <option value="scienze-politiche">Scienze Politiche</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg hover:opacity-90 font-bold transition-all btn-touch focus-ring">
+                    Registrati
+                </button>
+            </form>
+            
+            <p class="text-center text-gray-600 mt-4 mobile-text-sm">
+                Hai già un account? 
+                <button onclick="hideModal('registerModal'); showModal('loginModal');" class="text-purple-600 hover:text-purple-700 font-medium">
+                    Accedi qui
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let authToken = localStorage.getItem('authToken');
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (authToken) {
+                // Validate token and get user info
+                validateAuthToken();
+            }
+            
+            // Load featured venues
+            loadFeaturedVenues();
+            
+            // Set up form handlers
+            setupFormHandlers();
+            
+            // Set up mobile menu
+            setupMobileMenu();
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('searchDate').min = today;
+        });
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            menu.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+            
+            // Update button icon
+            const icon = btn.querySelector('i');
+            if (menu.classList.contains('open')) {
+                icon.className = 'fas fa-times text-xl';
+            } else {
+                icon.className = 'fas fa-bars text-xl';
+            }
+        }
+
+        function setupMobileMenu() {
+            // Close menu when clicking overlay
+            document.getElementById('mobileMenuOverlay').addEventListener('click', toggleMobileMenu);
+            
+            // Close menu on window resize if desktop
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    const menu = document.getElementById('mobileMenu');
+                    const overlay = document.getElementById('mobileMenuOverlay');
+                    menu.classList.remove('open');
+                    overlay.classList.add('hidden');
+                }
+            });
+        }
+
+        // Authentication functions
+        async function validateAuthToken() {
+            try {
+                // In a real app, validate token with server
+                // For now, just show user menu
+                showUserMenu();
+            } catch (error) {
+                console.error('Token validation failed:', error);
+                localStorage.removeItem('authToken');
+                authToken = null;
+            }
+        }
+
+        function showUserMenu() {
+            document.getElementById('auth-buttons').classList.add('hidden');
+            document.getElementById('user-menu').classList.remove('hidden');
+            document.getElementById('mobile-auth-buttons').classList.add('hidden');
+            document.getElementById('mobile-user-menu').classList.remove('hidden');
+        }
+
+        function hideUserMenu() {
+            document.getElementById('auth-buttons').classList.remove('hidden');
+            document.getElementById('user-menu').classList.add('hidden');
+            document.getElementById('mobile-auth-buttons').classList.remove('hidden');
+            document.getElementById('mobile-user-menu').classList.add('hidden');
+        }
+
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Social authentication
+        async function loginWithGoogle() {
+            try {
+                const response = await fetch('/api/auth-social.php?provider=google');
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.auth_url;
+                } else {
+                    showNotification('Errore durante l\'autenticazione Google', 'error');
+                }
+            } catch (error) {
+                console.error('Google auth error:', error);
+                showNotification('Errore durante l\'autenticazione Google', 'error');
+            }
+        }
+
+        async function loginWithFacebook() {
+            try {
+                const response = await fetch('/api/auth-social.php?provider=facebook');
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.auth_url;
+                } else {
+                    showNotification('Errore durante l\'autenticazione Facebook', 'error');
+                }
+            } catch (error) {
+                console.error('Facebook auth error:', error);
+                showNotification('Errore durante l\'autenticazione Facebook', 'error');
+            }
+        }
+
+        // Form handlers
+        function setupFormHandlers() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        authToken = data.token;
+                        localStorage.setItem('authToken', authToken);
+                        currentUser = data.user;
+                        
+                        hideModal('loginModal');
+                        showUserMenu();
+                        showNotification('Login effettuato con successo!', 'success');
+                        
+                        // Update user name
+                        document.getElementById('user-name').textContent = data.user.name;
+                        document.getElementById('mobile-user-name').textContent = data.user.name;
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showNotification('Errore durante il login', 'error');
+                }
+            });
+            
+            // Register form
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById('registerName').value,
+                    email: document.getElementById('registerEmail').value,
+                    password: document.getElementById('registerPassword').value,
+                    department: document.getElementById('registerDepartment').value
+                };
+                
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        hideModal('registerModal');
+                        showNotification('Registrazione completata! Ora puoi accedere.', 'success');
+                        showModal('loginModal');
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showNotification('Errore durante la registrazione', 'error');
+                }
+            });
+        }
+
+        // Venue functions
+        async function loadFeaturedVenues() {
+            try {
+                const response = await fetch('/api/venues/featured');
+                const data = await response.json();
+                
+                if (data.success && data.venues.length > 0) {
+                    displayFeaturedVenues(data.venues);
+                } else {
+                    displayNoVenuesMessage();
+                }
+            } catch (error) {
+                console.error('Error loading featured venues:', error);
+                displayNoVenuesMessage();
+            }
+        }
+
+        function displayFeaturedVenues(venues) {
+            const container = document.getElementById('featuredVenues');
+            container.innerHTML = venues.map(venue => createVenueCard(venue)).join('');
+        }
+
+        function displayNoVenuesMessage() {
+            const container = document.getElementById('featuredVenues');
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-store text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Locali in Arrivo!</h3>
+                        <p class="text-gray-600 mb-4">I nostri partner stanno preparando dei locali fantastici per le tue feste di laurea.</p>
+                        <button onclick="showModal('registerModal')" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity btn-touch focus-ring">
+                            Registrati per le Novità
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createVenueCard(venue) {
+            const typeLabels = {
+                'restaurant': 'Ristorante',
+                'pub': 'Pub',
+                'club': 'Club',
+                'outdoor': 'Spazio Esterno',
+                'hotel': 'Hotel',
+                'agriturismo': 'Agriturismo',
+                'villa': 'Villa'
+            };
+
+            return `
+                <div class="venue-card card-shadow bg-white rounded-xl overflow-hidden hover-scale">
+                    <div class="h-48 bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center">
+                        <i class="fas fa-image text-white text-4xl opacity-50"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">${venue.name}</h3>
+                                <p class="text-sm text-purple-600 font-medium">${typeLabels[venue.type] || venue.type}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-500">da</div>
+                                <div class="text-lg font-bold text-gray-900">€${venue.price_min}</div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                            ${venue.description ? venue.description.substring(0, 100) + '...' : 'Descrizione non disponibile'}
+                        </p>
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-users mr-1"></i>
+                                ${venue.capacity_min}-${venue.capacity_max} persone
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-star rating-stars mr-1"></i>
+                                ${venue.rating_display}
+                                ${venue.reviews_count > 0 ? `(${venue.reviews_count})` : ''}
+                            </div>
+                        </div>
+                        
+                        <button onclick="showVenueDetail(${venue.id})" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition-all font-medium btn-touch focus-ring">
+                            Vedi Dettagli
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Navigation functions
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.remove('hidden');
+            
+            // Load section-specific data
+            if (sectionName === 'venues') {
+                loadAllVenues();
+            }
+        }
+
+        async function loadAllVenues() {
+            try {
+                const response = await fetch('/api/venues');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayVenues(data.venues);
+                } else {
+                    displayNoVenuesMessage();
+                }
+            } catch (error) {
+                console.error('Error loading venues:', error);
+                displayNoVenuesMessage();
+            }
+        }
+
+        function displayVenues(venues) {
+            const container = document.getElementById('venuesGrid');
+            
+            if (!venues || venues.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500 text-lg">Nessun locale trovato con i filtri selezionati</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = venues.map(venue => createVenueCard(venue)).join('');
+        }
+
+        // Search and filter functions
+        async function searchVenues() {
+            const filters = {
+                date: document.getElementById('searchDate').value,
+                guests: document.getElementById('searchGuests').value,
+                budget: document.getElementById('searchBudget').value
+            };
+            
+            showSection('venues');
+            // Apply filters and load venues
+            await loadAllVenues();
+        }
+
+        async function filterVenues() {
+            const filters = {
+                type: document.getElementById('filterType').value,
+                zone: document.getElementById('filterZone').value,
+                price: document.getElementById('filterPrice').value,
+                capacity: document.getElementById('filterCapacity').value
+            };
+            
+            try {
+                const queryParams = new URLSearchParams(filters).toString();
+                const response = await fetch(`/api/venues?${queryParams}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayVenues(data.venues);
+                } else {
+                    displayNoVenuesMessage();
+                }
+            } catch (error) {
+                console.error('Error filtering venues:', error);
+                displayNoVenuesMessage();
+            }
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Utility functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            } text-white`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200 btn-touch focus-ring">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            authToken = null;
+            currentUser = null;
+            hideUserMenu();
+            showNotification('Logout effettuato con successo', 'success');
+            showSection('home');
+        }
+
+        // Placeholder functions for future implementation
+        function showVenueDetail(venueId) {
+            showNotification('Funzionalità in sviluppo', 'info');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#user-menu')) {
+                document.getElementById('user-dropdown').classList.add('hidden');
+            }
+        });
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                const modalId = e.target.id;
+                hideModal(modalId);
+            }
+        });
+    </script>
+</body>
+</html>

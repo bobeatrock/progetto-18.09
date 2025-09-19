@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestaLaurea - Organizza la Tua Festa di Laurea Perfetta</title>
+    <meta name="description" content="Prenota la tua festa di laurea nei migliori locali. Login con social, pagamenti sicuri, gestione completa eventi.">
+    
+    <!-- CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="/">
+                <i class="bi bi-mortarboard-fill"></i> FestaLaurea
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#come-funziona">Come Funziona</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#locali">Locali</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#prezzi">Prezzi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contatti">Contatti</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-outline-primary" onclick="openLoginModal()">
+                            <i class="bi bi-person-circle"></i> Accedi
+                        </button>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-primary" href="register.html">
+                            Registrati Gratis
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100 pt-5">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Organizza la <span class="text-primary">Festa di Laurea</span> Perfetta
+                    </h1>
+                    <p class="lead text-muted mb-4">
+                        Confronta prezzi, prenota online, gestisci invitati. Tutto in un'unica piattaforma semplice e sicura.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <button class="btn btn-primary btn-lg" onclick="startSearch()">
+                            <i class="bi bi-search"></i> Trova il Locale Perfetto
+                        </button>
+                        <button class="btn btn-outline-dark btn-lg" onclick="playDemo()">
+                            <i class="bi bi-play-circle"></i> Guarda Come Funziona
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center gap-4">
+                        <div>
+                            <h5 class="mb-0 text-primary">500+</h5>
+                            <small class="text-muted">Feste Organizzate</small>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 text-primary">4.9/5</h5>
+                            <small class="text-muted">Valutazione Media</small>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 text-primary">50+</h5>
+                            <small class="text-muted">Locali Partner</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="position-relative">
+                        <img src="assets/images/hero-party.svg" alt="Festa di Laurea" class="img-fluid">
+                        <div class="floating-card position-absolute top-0 end-0">
+                            <div class="bg-white p-3 rounded-3 shadow">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span class="fw-semibold">Prenotazione Confermata!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5 bg-light" id="come-funziona">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Come Funziona</h2>
+                <p class="lead text-muted">3 semplici passi per la tua festa perfetta</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h4>1. Cerca e Confronta</h4>
+                        <p class="text-muted">Trova il locale perfetto tra oltre 50 opzioni. Confronta prezzi, servizi e disponibilità in tempo reale.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <h4>2. Prenota Online</h4>
+                        <p class="text-muted">Prenota con un click, paga in sicurezza. Ricevi conferma immediata e gestisci tutto dal tuo account.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h4>3. Gestisci la Festa</h4>
+                        <p class="text-muted">Invita amici, raccogli quote, organizza il menu. Tutto dalla tua dashboard personale.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="search-box bg-primary bg-gradient p-5 rounded-4 text-white">
+                <h3 class="text-center mb-4">Trova il Locale Perfetto</h3>
+                <form id="searchForm" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Data</label>
+                        <input type="date" class="form-control form-control-lg" id="searchDate" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Numero Ospiti</label>
+                        <input type="number" class="form-control form-control-lg" id="searchGuests" min="10" max="200" placeholder="30" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Budget (per persona)</label>
+                        <select class="form-select form-select-lg" id="searchBudget">
+                            <option value="">Qualsiasi</option>
+                            <option value="0-20">€0-20</option>
+                            <option value="20-35">€20-35</option>
+                            <option value="35-50">€35-50</option>
+                            <option value="50+">€50+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-warning btn-lg w-100">
+                            <i class="bi bi-search"></i> Cerca Locali
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Venues -->
+    <section class="py-5 bg-light" id="locali">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Locali Popolari</h2>
+                <p class="lead text-muted">I preferiti dai laureandi</p>
+            </div>
+            
+            <div class="row g-4" id="venuesGrid">
+                <!-- Venues will be loaded dynamically -->
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="venues.html" class="btn btn-outline-primary btn-lg">
+                    Vedi Tutti i Locali <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Cosa Dicono i Laureati</h2>
+                <p class="lead text-muted">Oltre 500 feste organizzate con successo</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="testimonial-card">
+                        <div class="stars mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3">"Organizzazione perfetta! Ho trovato il locale ideale in 5 minuti e gestito tutto online. Consigliatissimo!"</p>
+                        <div class="d-flex align-items-center">
+                            <img src="assets/images/avatar1.jpg" alt="Giulia" class="avatar me-3">
+                            <div>
+                                <h6 class="mb-0">Giulia Rossi</h6>
+                                <small class="text-muted">Laurea in Medicina</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="testimonial-card">
+                        <div class="stars mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3">"Il sistema di pagamento condiviso è geniale! Ogni invitato ha pagato la sua quota online. Zero stress!"</p>
+                        <div class="d-flex align-items-center">
+                            <img src="assets/images/avatar2.jpg" alt="Marco" class="avatar me-3">
+                            <div>
+                                <h6 class="mb-0">Marco Bianchi</h6>
+                                <small class="text-muted">Laurea in Ingegneria</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="testimonial-card">
+                        <div class="stars mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3">"Prezzi trasparenti e nessuna sorpresa. La festa è stata perfetta e ho risparmiato tempo e denaro!"</p>
+                        <div class="d-flex align-items-center">
+                            <img src="assets/images/avatar3.jpg" alt="Sofia" class="avatar me-3">
+                            <div>
+                                <h6 class="mb-0">Sofia Ferrari</h6>
+                                <small class="text-muted">Laurea in Economia</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="display-5 fw-bold mb-4">Pronto per Organizzare la Tua Festa?</h2>
+            <p class="lead mb-4">Registrati gratis e inizia subito a pianificare</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="register.html" class="btn btn-warning btn-lg">
+                    <i class="bi bi-rocket-takeoff"></i> Inizia Ora
+                </a>
+                <button class="btn btn-outline-light btn-lg" onclick="openChat()">
+                    <i class="bi bi-chat-dots"></i> Parla con Noi
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark text-white">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-mortarboard-fill"></i> FestaLaurea
+                    </h5>
+                    <p class="text-white-50">La piattaforma numero 1 per organizzare feste di laurea indimenticabili.</p>
+                    <div class="social-links mt-3">
+                        <a href="#" class="text-white-50 me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white-50 me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white-50 me-3"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-white-50"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="mb-3">Piattaforma</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50">Come Funziona</a></li>
+                        <li><a href="#" class="text-white-50">Prezzi</a></li>
+                        <li><a href="#" class="text-white-50">Locali Partner</a></li>
+                        <li><a href="#" class="text-white-50">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="mb-3">Azienda</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50">Chi Siamo</a></li>
+                        <li><a href="#" class="text-white-50">Contatti</a></li>
+                        <li><a href="#" class="text-white-50">Diventa Partner</a></li>
+                        <li><a href="#" class="text-white-50">Lavora con Noi</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="mb-3">Legale</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50">Privacy Policy</a></li>
+                        <li><a href="#" class="text-white-50">Termini di Servizio</a></li>
+                        <li><a href="#" class="text-white-50">Cookie Policy</a></li>
+                        <li><a href="#" class="text-white-50">GDPR</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="mb-3">Supporto</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50">Centro Assistenza</a></li>
+                        <li><a href="#" class="text-white-50">Live Chat</a></li>
+                        <li><a href="#" class="text-white-50">Email</a></li>
+                        <li><a href="#" class="text-white-50">WhatsApp</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center text-white-50">
+                <p class="mb-0">&copy; 2024 FestaLaurea S.r.l. - P.IVA 12345678901 - Tutti i diritti riservati</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Accedi a FestaLaurea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Social Login -->
+                    <div class="d-grid gap-2 mb-3">
+                        <button class="btn btn-outline-dark" onclick="loginWithGoogle()">
+                            <img src="https://www.google.com/favicon.ico" width="20" class="me-2">
+                            Continua con Google
+                        </button>
+                        <button class="btn btn-primary" onclick="loginWithFacebook()">
+                            <i class="bi bi-facebook me-2"></i>
+                            Continua con Facebook
+                        </button>
+                    </div>
+                    
+                    <div class="text-center text-muted my-3">
+                        <span>oppure</span>
+                    </div>
+                    
+                    <!-- Email Login -->
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">
+                                    Ricordami
+                                </label>
+                            </div>
+                            <a href="#" class="text-decoration-none">Password dimenticata?</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Accedi</button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <span class="text-muted">Non hai un account?</span>
+                        <a href="register.html" class="text-decoration-none">Registrati</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-button" onclick="toggleChat()">
+            <i class="bi bi-chat-dots-fill"></i>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

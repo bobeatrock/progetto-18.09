@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Come Funziona - FestaLaurea</title>
+    <meta name="description" content="Scopri come prenotare la tua festa di laurea in 3 semplici passi con FestaLaurea">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .step-card { transition: all 0.3s ease; }
+        .step-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .step-number { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        .timeline-line {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            width: 2px;
+            height: calc(100% - 60px);
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            transform: translateX(-50%);
+        }
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-line { display: none; }
+            .step-number { width: 50px; height: 50px; font-size: 1.25rem; }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="gradient-bg text-white px-3 py-2 rounded-lg font-bold text-lg">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold gradient-text">FestaLaurea</h1>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Home</a>
+                    <a href="/venues" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">Locali</a>
+                    <a href="/how-it-works.html" class="text-purple-600 font-medium">Come funziona</a>
+                    <a href="/faq.html" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">FAQ</a>
+                </nav>
+                
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">
+                        Accedi
+                    </a>
+                    <a href="/" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all font-medium">
+                        Registrati
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Come Funziona FestaLaurea</h1>
+            <p class="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
+                Prenotare la tua festa di laurea non è mai stato così semplice. 
+                Segui questi 3 semplici passi e organizza l'evento perfetto per celebrare il tuo traguardo.
+            </p>
+        </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">3 Semplici Passi</h2>
+                <p class="text-xl text-gray-600">Dalla ricerca alla festa, tutto in pochi click</p>
+            </div>
+            
+            <div class="relative max-w-4xl mx-auto">
+                <!-- Timeline line for desktop -->
+                <div class="hidden md:block timeline-line"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+                    <!-- Step 1 -->
+                    <div class="step-card bg-white rounded-xl p-8 shadow-lg text-center relative">
+                        <div class="step-number">1</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Cerca e Scegli</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Utilizza i nostri filtri avanzati per trovare il locale perfetto. 
+                            Filtra per data, numero di persone, budget e tipo di locale.
+                        </p>
+                        <div class="space-y-3 text-sm text-gray-500">
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-calendar-alt mr-2 text-purple-500"></i>
+                                Seleziona la data della festa
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-users mr-2 text-purple-500"></i>
+                                Indica il numero di invitati
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-euro-sign mr-2 text-purple-500"></i>
+                                Imposta il tuo budget
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="step-card bg-white rounded-xl p-8 shadow-lg text-center relative">
+                        <div class="step-number">2</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Prenota Online</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Scegli il locale che preferisci e completa la prenotazione online. 
+                            Pagamento sicuro con carta di credito o PayPal.
+                        </p>
+                        <div class="space-y-3 text-sm text-gray-500">
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-credit-card mr-2 text-purple-500"></i>
+                                Pagamento sicuro online
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-shield-alt mr-2 text-purple-500"></i>
+                                Protezione acquirente
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-check-circle mr-2 text-purple-500"></i>
+                                Conferma immediata
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3 -->
+                    <div class="step-card bg-white rounded-xl p-8 shadow-lg text-center relative">
+                        <div class="step-number">3</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Festeggia!</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Il giorno della festa presentati al locale con la conferma di prenotazione. 
+                            Tutto è già organizzato per te!
+                        </p>
+                        <div class="space-y-3 text-sm text-gray-500">
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-mobile-alt mr-2 text-purple-500"></i>
+                                Conferma sul telefono
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-concierge-bell mr-2 text-purple-500"></i>
+                                Servizio dedicato
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-star mr-2 text-purple-500"></i>
+                                Esperienza indimenticabile
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Perché Scegliere FestaLaurea</h2>
+                <p class="text-xl text-gray-600">I vantaggi che ci rendono unici</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Risparmia Tempo</h3>
+                    <p class="text-gray-600">
+                        Non perdere tempo a chiamare decine di locali. 
+                        Confronta prezzi e disponibilità in un solo posto.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-euro-sign text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Prezzi Trasparenti</h3>
+                    <p class="text-gray-600">
+                        Nessun costo nascosto. Tutti i prezzi sono chiari 
+                        e comprensivi di servizio e tasse.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Supporto Dedicato</h3>
+                    <p class="text-gray-600">
+                        Il nostro team è sempre disponibile per aiutarti 
+                        a organizzare la festa perfetta.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-medal text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Qualità Garantita</h3>
+                    <p class="text-gray-600">
+                        Collaboriamo solo con locali selezionati e verificati 
+                        per garantirti la migliore esperienza.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Details -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Processo Dettagliato</h2>
+                <p class="text-xl text-gray-600">Tutto quello che devi sapere</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto space-y-12">
+                <!-- Search Process -->
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="md:w-1/2">
+                        <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-8">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                                <i class="fas fa-search text-purple-600 mr-3"></i>
+                                Ricerca Avanzata
+                            </h3>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Filtra per data, orario e durata dell'evento</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Seleziona il numero esatto di invitati</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Imposta il budget per persona o totale</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Scegli il tipo di locale e la zona preferita</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="bg-gray-100 rounded-xl p-8 text-center">
+                            <i class="fas fa-laptop text-6xl text-purple-500 mb-4"></i>
+                            <p class="text-gray-600">
+                                La nostra piattaforma ti mostrerà solo i locali disponibili 
+                                nella data scelta, con prezzi aggiornati in tempo reale.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Booking Process -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                    <div class="md:w-1/2">
+                        <div class="bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl p-8">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                                <i class="fas fa-calendar-check text-blue-600 mr-3"></i>
+                                Prenotazione Sicura
+                            </h3>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Compila i dettagli dell'evento e richieste speciali</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Scegli menu e servizi aggiuntivi</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Paga in sicurezza con carta o PayPal</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Ricevi conferma immediata via email e SMS</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="bg-gray-100 rounded-xl p-8 text-center">
+                            <i class="fas fa-shield-alt text-6xl text-blue-500 mb-4"></i>
+                            <p class="text-gray-600">
+                                Tutti i pagamenti sono protetti da crittografia SSL 
+                                e processati da partner certificati PCI DSS.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Event Day -->
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="md:w-1/2">
+                        <div class="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-8">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                                <i class="fas fa-party-horn text-green-600 mr-3"></i>
+                                Il Giorno della Festa
+                            </h3>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Presentati al locale con la conferma di prenotazione</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Il personale ti accoglierà e ti accompagnerà al tavolo</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Goditi la festa senza pensieri</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                                    <span>Lascia una recensione per aiutare altri studenti</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="bg-gray-100 rounded-xl p-8 text-center">
+                            <i class="fas fa-graduation-cap text-6xl text-green-500 mb-4"></i>
+                            <p class="text-gray-600">
+                                Il nostro team monitora ogni evento per assicurarsi 
+                                che tutto proceda secondo i piani.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Preview -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Domande Frequenti</h2>
+                <p class="text-xl text-gray-600">Le risposte alle domande più comuni</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">
+                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>
+                        Posso modificare o cancellare la prenotazione?
+                    </h3>
+                    <p class="text-gray-600">
+                        Sì, puoi modificare o cancellare la prenotazione fino a 48 ore prima dell'evento. 
+                        Le modifiche sono gratuite, mentre per le cancellazioni si applica una piccola commissione.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">
+                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>
+                        Cosa succede se il locale non rispetta la prenotazione?
+                    </h3>
+                    <p class="text-gray-600">
+                        Tutti i nostri partner sono verificati e affidabili. Nel raro caso di problemi, 
+                        il nostro team ti aiuterà a trovare una soluzione alternativa o ti rimborserà completamente.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">
+                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>
+                        Ci sono costi aggiuntivi oltre al prezzo mostrato?
+                    </h3>
+                    <p class="text-gray-600">
+                        No, tutti i prezzi mostrati sono finali e comprensivi di servizio e tasse. 
+                        L'unico costo aggiuntivo potrebbe essere per servizi extra che scegli durante la prenotazione.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="/faq.html" class="gradient-bg text-white px-8 py-3 rounded-lg hover:opacity-90 transition-all font-medium">
+                    Vedi Tutte le FAQ
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Pronto a Organizzare la Tua Festa?</h2>
+            <p class="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                Unisciti a centinaia di studenti che hanno già celebrato la loro laurea con FestaLaurea
+            </p>
+            <div class="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
+                <a href="/" class="inline-block bg-white text-purple-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition-all font-bold">
+                    Inizia Ora
+                </a>
+                <a href="/faq.html" class="inline-block border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-purple-600 transition-all font-bold">
+                    Hai Domande?
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="gradient-bg text-white px-3 py-2 rounded-lg font-bold text-lg">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">FestaLaurea</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        La piattaforma dedicata agli studenti dell'Università di Padova 
+                        per organizzare feste di laurea indimenticabili.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Link Utili</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="/venues" class="hover:text-white transition-colors">Locali</a></li>
+                        <li><a href="/how-it-works.html" class="hover:text-white transition-colors">Come funziona</a></li>
+                        <li><a href="/faq.html" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Supporto</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="mailto:info@festalaurea.eu" class="hover:text-white transition-colors">info@festalaurea.eu</a></li>
+                        <li><a href="tel:+390491234567" class="hover:text-white transition-colors">+39 049 123 4567</a></li>
+                        <li><span>Lun-Ven 9:00-18:00</span></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Seguici</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 FestaLaurea. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

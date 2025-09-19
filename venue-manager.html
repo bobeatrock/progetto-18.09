@@ -1,0 +1,966 @@
+        <nav class="py-4">
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showSection('bookings')">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Prenotazioni</span>
+            </div>
+            <div class="nav-item" onclick="showSection('availability')">
+                <i class="fas fa-clock"></i>
+                <span>Disponibilità</span>
+            </div>
+            <div class="nav-item" onclick="showSection('venue-profile')">
+                <i class="fas fa-store"></i>
+                <span>Profilo Locale</span>
+            </div>
+            <div class="nav-item" onclick="showSection('analytics')">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </div>
+            <div class="nav-item" onclick="showSection('reviews')">
+                <i class="fas fa-star"></i>
+                <span>Recensioni</span>
+            </div>
+            <div class="nav-item" onclick="showSection('messages')">
+                <i class="fas fa-comments"></i>
+                <span>Messaggi</span>
+            </div>
+            <div class="nav-item" onclick="showSection('settings')">
+                <i class="fas fa-cog"></i>
+                <span>Impostazioni</span>
+            </div>
+        </nav>
+        
+        <div class="absolute bottom-4 left-4 right-4">
+            <button onclick="logout()" class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="bg-white shadow-sm p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Pannello di Controllo</h1>
+                    <p class="text-gray-600">Gestisci il tuo locale su FestaLaurea</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="notificationCount">0</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://via.placeholder.com/32/667eea/ffffff?text=GM" class="w-8 h-8 rounded-full">
+                        <span class="font-medium" id="managerName">Gestore Locale</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section-content p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Prenotazioni Oggi</p>
+                            <p class="text-2xl font-bold text-gray-800" id="todayBookings">0</p>
+                        </div>
+                        <div class="w-12 h-12 gradient-bg rounded-lg flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Ricavi Mese</p>
+                            <p class="text-2xl font-bold text-gray-800" id="monthRevenue">€0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-euro-sign text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Rating Medio</p>
+                            <p class="text-2xl font-bold text-gray-800" id="averageRating">Nuovo</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-star text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">In Attesa</p>
+                            <p class="text-2xl font-bold text-gray-800" id="pendingBookings">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-hourglass-half text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Prenotazioni Recenti</h3>
+                    <div id="recentBookings" class="space-y-3">
+                        <!-- Recent bookings will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Calendario Rapido</h3>
+                    <div id="quickCalendar">
+                        <!-- Quick calendar will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bookings Section -->
+        <section id="bookings" class="section-content hidden p-6">
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold">Gestione Prenotazioni</h2>
+                    <div class="flex space-x-2">
+                        <select id="bookingFilter" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="all">Tutte</option>
+                            <option value="pending">In attesa</option>
+                            <option value="confirmed">Confermate</option>
+                            <option value="cancelled">Annullate</option>
+                            <option value="completed">Completate</option>
+                        </select>
+                        <input type="date" id="bookingDateFilter" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <button onclick="applyBookingFilters()" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90">
+                            Filtra
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="text-left p-3">Data/Ora</th>
+                                <th class="text-left p-3">Cliente</th>
+                                <th class="text-left p-3">Contatto</th>
+                                <th class="text-left p-3">Ospiti</th>
+                                <th class="text-left p-3">Menu</th>
+                                <th class="text-left p-3">Totale</th>
+                                <th class="text-left p-3">Stato</th>
+                                <th class="text-left p-3">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsTable">
+                            <!-- Bookings will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section id="reviews" class="section-content hidden p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Panoramica Recensioni</h3>
+                    <div class="space-y-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-gray-800" id="overallRating">0.0</div>
+                            <div class="text-yellow-500 text-xl mb-2" id="overallStars">☆☆☆☆☆</div>
+                            <div class="text-sm text-gray-600" id="totalReviewsCount">0 recensioni</div>
+                        </div>
+                        
+                        <div class="space-y-2" id="ratingDistribution">
+                            <!-- Rating distribution will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-2 stat-card">
+                    <h3 class="text-lg font-bold mb-4">Recensioni Recenti</h3>
+                    <div id="recentReviews" class="space-y-4 max-h-96 overflow-y-auto">
+                        <!-- Recent reviews will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Availability Section -->
+        <section id="availability" class="section-content hidden p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Calendario Disponibilità</h3>
+                    <div class="mb-4 flex items-center justify-between">
+                        <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-100 rounded transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h4 id="calendarMonth" class="font-bold">Marzo 2025</h4>
+                        <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-100 rounded transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-grid" id="availabilityCalendar">
+                        <!-- Calendar will be generated here -->
+                    </div>
+                    <div class="mt-4 flex items-center space-x-4 text-sm">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-green-200 rounded mr-2"></div>
+                            <span>Disponibile</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-red-200 rounded mr-2"></div>
+                            <span>Prenotato</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-gray-200 rounded mr-2"></div>
+                            <span>Non disponibile</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Orari e Prezzi</h3>
+                    <form id="availabilityForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Giorni di apertura</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days" value="monday" class="mr-2">
+                                    Lunedì
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days" value="tuesday" class="mr-2">
+                                    Martedì
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days" value="wednesday" class="mr-2">
+                                    Mercoledì
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days" value="thursday" class="mr-2">
+                                    Giovedì
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days" value="friday" class="mr-2" checked>
+                                    Venerdì
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days" value="saturday" class="mr-2" checked>
+                                    Sabato
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days" value="sunday" class="mr-2">
+                                    Domenica
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold mb-2">Orario apertura</label>
+                                <input type="time" value="12:00" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold mb-2">Orario chiusura</label>
+                                <input type="time" value="23:00" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Menu e Prezzi</label>
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input type="text" placeholder="Nome menu" value="Menu Base" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <input type="number" placeholder="Prezzo €" value="25" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input type="text" placeholder="Nome menu" value="Menu Premium" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <input type="number" placeholder="Prezzo €" value="40" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input type="text" placeholder="Nome menu" value="Menu Luxury" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <input type="number" placeholder="Prezzo €" value="60" class="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                            Salva Impostazioni
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="section-content hidden p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Prenotazioni Ultimi 30 Giorni</h3>
+                    <div id="bookingsChart" class="h-64">
+                        <!-- Chart will be rendered here -->
+                        <div class="flex items-center justify-center h-full text-gray-500">
+                            <div class="text-center">
+                                <i class="fas fa-chart-line text-4xl mb-4"></i>
+                                <p>Grafici in preparazione</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Ricavi Mensili</h3>
+                    <div id="revenueChart" class="h-64">
+                        <!-- Chart will be rendered here -->
+                        <div class="flex items-center justify-center h-full text-gray-500">
+                            <div class="text-center">
+                                <i class="fas fa-chart-bar text-4xl mb-4"></i>
+                                <p>Grafici in preparazione</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3 class="text-lg font-bold mb-4">Statistiche Dettagliate</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600" id="avgGroupSize">0</div>
+                        <div class="text-sm text-gray-600">Dimensione Media Gruppo</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600" id="occupancyRate">0%</div>
+                        <div class="text-sm text-gray-600">Tasso di Occupazione</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-600" id="busiestDay">-</div>
+                        <div class="text-sm text-gray-600">Giorno più Richiesto</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Messages Section -->
+        <section id="messages" class="section-content hidden p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-96">
+                <div class="stat-card">
+                    <h3 class="text-lg font-bold mb-4">Conversazioni</h3>
+                    <div class="space-y-2" id="conversationsList">
+                        <!-- Sample conversations -->
+                        <div class="p-3 hover:bg-gray-50 cursor-pointer rounded-lg">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-medium">Marco Rossi</span>
+                                <span class="text-xs text-gray-500">10:30</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Posso spostare la prenotazione?</p>
+                        </div>
+                        <div class="p-3 hover:bg-gray-50 cursor-pointer rounded-lg">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-medium">Laura Bianchi</span>
+                                <span class="text-xs text-gray-500">09:15</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Avete menu vegetariani?</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-2 stat-card flex flex-col">
+                    <div class="flex items-center justify-between mb-4 pb-4 border-b">
+                        <div class="flex items-center space-x-3">
+                            <img src="https://via.placeholder.com/32/4f46e5/ffffff?text=M" class="w-8 h-8 rounded-full">
+                            <div>
+                                <div class="font-medium">Marco Rossi</div>
+                                <div class="text-sm text-gray-500">Online ora</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto space-y-4 mb-4" id="chatMessages">
+                        <div class="flex items-start">
+                            <img src="https://via.placeholder.com/32/4f46e5/ffffff?text=M" class="w-8 h-8 rounded-full mr-3 mt-1">
+                            <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+                                <p class="text-sm">Ciao, avrei bisogno di spostare la prenotazione dal 15 al 20 marzo. È possibile?</p>
+                                <span class="text-xs text-gray-500">10:25</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start justify-end">
+                            <div class="gradient-bg text-white rounded-lg p-3 max-w-xs">
+                                <p class="text-sm">Ciao Marco! Controllo subito la disponibilità per il 20 marzo...</p>
+                                <span class="text-xs text-blue-100">10:28</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start justify-end">
+                            <div class="gradient-bg text-white rounded-lg p-3 max-w-xs">
+                                <p class="text-sm">Perfetto! Il 20 marzo è libero. Confermo lo spostamento della tua prenotazione per 25 persone alle 19:30.</p>
+                                <span class="text-xs text-blue-100">10:30</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <div class="flex items-center space-x-2">
+                            <input type="text" placeholder="Scrivi un messaggio..." class="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <button class="gradient-bg text-white p-2 rounded-lg hover:opacity-90 transition-opacity">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Global variables
+        let currentVenue = null;
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+            "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadVenueData();
+            loadDashboardData();
+            generateCalendar();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            const userData = localStorage.getItem('userData');
+            
+            if (!token || !userData) {
+                window.location.href = '/index.html';
+                return;
+            }
+            
+            const user = JSON.parse(userData);
+            if (user.type !== 'venue_owner') {
+                window.location.href = '/index.html';
+                return;
+            }
+            
+            document.getElementById('managerName').textContent = user.name;
+        }
+
+        async function loadVenueData() {
+            try {
+                const response = await fetch('/api/venues/my-venue', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentVenue = data.venue;
+                    document.getElementById('venueName').textContent = currentVenue.name;
+                } else {
+                    document.getElementById('venueName').textContent = 'Nuovo Locale';
+                }
+            } catch (error) {
+                console.error('Error loading venue:', error);
+                document.getElementById('venueName').textContent = 'Nuovo Locale';
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/venues/dashboard-stats', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateDashboardStats(data.stats);
+                } else {
+                    showSampleStats();
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                showSampleStats();
+            }
+        }
+
+        function updateDashboardStats(stats) {
+            document.getElementById('todayBookings').textContent = stats.today_bookings || '0';
+            document.getElementById('monthRevenue').textContent = `€${stats.month_revenue || '0'}`;
+            document.getElementById('averageRating').textContent = stats.average_rating || 'Nuovo';
+            document.getElementById('pendingBookings').textContent = stats.pending_bookings || '0';
+            
+            // Update notification count
+            document.getElementById('notificationCount').textContent = stats.pending_bookings || '0';
+        }
+
+        function showSampleStats() {
+            document.getElementById('todayBookings').textContent = '0';
+            document.getElementById('monthRevenue').textContent = '€0';
+            document.getElementById('averageRating').textContent = 'Nuovo';
+            document.getElementById('pendingBookings').textContent = '0';
+            
+            // Sample recent bookings
+            document.getElementById('recentBookings').innerHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-calendar-plus text-3xl mb-3"></i>
+                    <p>Nessuna prenotazione ancora</p>
+                    <p class="text-sm">Le tue prenotazioni appariranno qui</p>
+                </div>
+            `;
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section and activate nav item
+            document.getElementById(sectionName).classList.remove('hidden');
+            event.target.classList.add('active');
+            
+            // Load section-specific data
+            switch(sectionName) {
+                case 'bookings':
+                    loadBookings();
+                    break;
+                case 'reviews':
+                    loadReviews();
+                    break;
+                case 'availability':
+                    generateCalendar();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+            }
+        }
+
+        async function loadBookings() {
+            try {
+                const response = await fetch('/api/bookings/venue', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayBookings(data.bookings);
+                } else {
+                    displayEmptyBookings();
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                displayEmptyBookings();
+            }
+        }
+
+        function displayBookings(bookings) {
+            const table = document.getElementById('bookingsTable');
+            
+            if (!bookings || bookings.length === 0) {
+                table.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-gray-500">Nessuna prenotazione trovata</td></tr>';
+                return;
+            }
+            
+            table.innerHTML = bookings.map(booking => {
+                const statusColors = {
+                    'pending': 'bg-yellow-100 text-yellow-800',
+                    'confirmed': 'bg-green-100 text-green-800',
+                    'cancelled': 'bg-red-100 text-red-800',
+                    'completed': 'bg-blue-100 text-blue-800'
+                };
+                
+                const statusText = {
+                    'pending': 'In attesa',
+                    'confirmed': 'Confermata',
+                    'cancelled': 'Annullata',
+                    'completed': 'Completata'
+                };
+                
+                return `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">
+                            <div class="font-medium">${new Date(booking.event_date).toLocaleDateString('it-IT')}</div>
+                            <div class="text-sm text-gray-500">${booking.event_time}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-medium">${booking.user_name}</div>
+                            <div class="text-sm text-gray-500">${booking.department || ''}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="text-sm">
+                                <a href="mailto:${booking.user_email}" class="text-blue-600 hover:underline">${booking.user_email}</a>
+                                ${booking.user_phone ? `<br><a href="tel:${booking.user_phone}" class="text-blue-600 hover:underline">${booking.user_phone}</a>` : ''}
+                            </div>
+                        </td>
+                        <td class="p-3">${booking.guests}</td>
+                        <td class="p-3">${booking.menu_type || 'Standard'}</td>
+                        <td class="p-3">€${booking.total_amount}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded-full text-xs ${statusColors[booking.status]}">
+                                ${statusText[booking.status]}
+                            </span>
+                        </td>
+                        <td class="p-3">
+                            <div class="flex space-x-2">
+                                ${booking.status === 'pending' ? `
+                                    <button onclick="updateBookingStatus(${booking.id}, 'confirmed')" class="px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors">
+                                        Conferma
+                                    </button>
+                                    <button onclick="updateBookingStatus(${booking.id}, 'cancelled')" class="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors">
+                                        Rifiuta
+                                    </button>
+                                ` : `
+                                    <button onclick="viewBookingDetails(${booking.id})" class="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors">
+                                        Dettagli
+                                    </button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function displayEmptyBookings() {
+            const table = document.getElementById('bookingsTable');
+            table.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center py-12">
+                        <div class="text-gray-500">
+                            <i class="fas fa-calendar-plus text-4xl mb-4"></i>
+                            <p class="text-lg mb-2">Nessuna prenotazione ancora</p>
+                            <p class="text-sm">Le prenotazioni dei clienti appariranno qui</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        async function loadReviews() {
+            if (!currentVenue) return;
+            
+            try {
+                const response = await fetch(`/api/reviews/venue/${currentVenue.id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayReviews(data.reviews, data.total_reviews, data.rating_distribution);
+                } else {
+                    displayEmptyReviews();
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                displayEmptyReviews();
+            }
+        }
+
+        function displayReviews(reviews, totalReviews, ratingDistribution) {
+            // Update overview
+            const avgRating = reviews.length > 0 ? 
+                (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) : 0;
+            
+            document.getElementById('overallRating').textContent = avgRating.toFixed(1);
+            document.getElementById('overallStars').textContent = '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating));
+            document.getElementById('totalReviewsCount').textContent = `${totalReviews} recensioni`;
+            
+            // Update rating distribution
+            const distributionContainer = document.getElementById('ratingDistribution');
+            if (ratingDistribution && ratingDistribution.length > 0) {
+                distributionContainer.innerHTML = ratingDistribution.map(dist => `
+                    <div class="flex items-center">
+                        <span class="text-sm w-8">${dist.rating}★</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2 mx-2">
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: ${(dist.count / totalReviews) * 100}%"></div>
+                        </div>
+                        <span class="text-sm text-gray-600">${dist.count}</span>
+                    </div>
+                `).join('');
+            } else {
+                distributionContainer.innerHTML = '<p class="text-gray-500 text-center">Nessuna distribuzione disponibile</p>';
+            }
+            
+            // Update recent reviews
+            const reviewsContainer = document.getElementById('recentReviews');
+            if (reviews.length > 0) {
+                reviewsContainer.innerHTML = reviews.map(review => `
+                    <div class="border-b pb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-medium">${review.user_name}</span>
+                                <span class="text-yellow-500">${'★'.repeat(review.rating)}</span>
+                            </div>
+                            <span class="text-sm text-gray-500">${new Date(review.created_at).toLocaleDateString('it-IT')}</span>
+                        </div>
+                        ${review.title ? `<h4 class="font-medium mb-1">${review.title}</h4>` : ''}
+                        <p class="text-gray-700">${review.comment || 'Nessun commento'}</p>
+                        ${review.verified ? '<span class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Verificata</span>' : ''}
+                    </div>
+                `).join('');
+            } else {
+                reviewsContainer.innerHTML = displayEmptyReviews();
+            }
+        }
+
+        function displayEmptyReviews() {
+            document.getElementById('overallRating').textContent = '0.0';
+            document.getElementById('overallStars').textContent = '☆☆☆☆☆';
+            document.getElementById('totalReviewsCount').textContent = '0 recensioni';
+            document.getElementById('ratingDistribution').innerHTML = '<p class="text-gray-500 text-center">Nessuna recensione ancora</p>';
+            
+            return `
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-star text-4xl mb-4"></i>
+                    <p class="text-lg mb-2">Nessuna recensione ancora</p>
+                    <p class="text-sm">Le recensioni dei clienti appariranno qui dopo gli eventi completati</p>
+                </div>
+            `;
+        }
+
+        async function updateBookingStatus(bookingId, status) {
+            try {
+                const response = await fetch(`/api/bookings/${bookingId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadBookings(); // Reload bookings
+                    loadDashboardData(); // Update stats
+                    showNotification(`Prenotazione ${status === 'confirmed' ? 'confermata' : 'rifiutata'}`, 'success');
+                } else {
+                    showNotification(data.message || 'Errore durante l\'aggiornamento', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating booking:', error);
+                showNotification('Errore di connessione', 'error');
+            }
+        }
+
+        function generateCalendar() {
+            const calendar = document.getElementById('availabilityCalendar');
+            const monthYear = document.getElementById('calendarMonth');
+            
+            monthYear.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            let calendarHTML = '';
+            
+            // Add day headers
+            const dayHeaders = ['D', 'L', 'M', 'M', 'G', 'V', 'S'];
+            dayHeaders.forEach(day => {
+                calendarHTML += `<div class="calendar-day font-bold text-gray-600">${day}</div>`;
+            });
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                calendarHTML += `<div class="calendar-day"></div>`;
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isWeekend = new Date(currentYear, currentMonth, day).getDay() >= 5;
+                const hasBooking = Math.random() < 0.1; // Simulate some bookings
+                const className = hasBooking ? 'booked' : (isWeekend ? 'available' : '');
+                
+                calendarHTML += `<div class="calendar-day ${className}" onclick="selectDate(${day})">${day}</div>`;
+            }
+            
+            calendar.innerHTML = calendarHTML;
+        }
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar();
+        }
+
+        function selectDate(day) {
+            // Remove previous selection
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selection to clicked day
+            event.target.classList.add('selected');
+            
+            // Show date details
+            const selectedDate = new Date(currentYear, currentMonth, day);
+            showNotification(`Selezionato: ${selectedDate.toLocaleDateString('it-IT')}`, 'info');
+        }
+
+        function loadAnalytics() {
+            // Sample analytics data - in real implementation, load from API
+            document.getElementById('avgGroupSize').textContent = '25';
+            document.getElementById('occupancyRate').textContent = '15%';
+            document.getElementById('busiestDay').textContent = 'Sabato';
+        }
+
+        function applyBookingFilters() {
+            const status = document.getElementById('bookingFilter').value;
+            const date = document.getElementById('bookingDateFilter').value;
+            
+            // In real implementation, apply filters and reload bookings
+            showNotification('Filtri applicati', 'info');
+            loadBookings();
+        }
+
+        function viewBookingDetails(bookingId) {
+            showNotification('Dettagli prenotazione - funzionalità in sviluppo', 'info');
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            window.location.href = '/index.html';
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            } text-white`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Initialize availability form
+        document.getElementById('availabilityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showNotification('Impostazioni salvate', 'success');
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestaLaurea - Pannello Gestori</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar { width: 250px; min-height: 100vh; }
+        .main-content { margin-left: 250px; }
+        .stat-card { 
+            background: white; border-radius: 0.75rem; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+            padding: 1.5rem;
+        }
+        .nav-item {
+            display: flex; align-items: center; padding: 0.75rem 1rem;
+            color: #6b7280; cursor: pointer; transition: all 0.3s;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: #f3f4f6; color: #1f2937;
+        }
+        .nav-item i { width: 20px; margin-right: 0.75rem; }
+        
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            gap: 1px; background: #e5e7eb;
+        }
+        .calendar-day {
+            aspect-ratio: 1; background: white; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .calendar-day:hover { background: #f3f4f6; }
+        .calendar-day.booked { background: #fecaca; color: #991b1b; }
+        .calendar-day.available { background: #dcfce7; color: #166534; }
+        .calendar-day.selected { background: #dbeafe; color: #1e40af; }
+        
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; min-height: auto; position: relative; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div class="sidebar fixed left-0 top-0 bg-white shadow-lg md:relative">
+        <div class="p-6 gradient-bg text-white">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-utensils text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">Gestori FL</h2>
+                    <p class="text-sm opacity-75" id="venueName">Caricamento...</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="py-4">
+            <div class="nav-item active" onclick="showSection('dashboard')">

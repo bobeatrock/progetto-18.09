@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestaLaurea - Prenota la tua festa di laurea</title>
+    <meta name="description" content="Prenota la tua festa di laurea nei migliori locali di Padova. Ricerca avanzata, prezzi trasparenti e prenotazione istantanea.">
+    <meta name="keywords" content="festa laurea Padova, ristoranti laurea, locali feste Padova, prenotazione festa, università Padova">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="FestaLaurea - Prenota la tua festa di laurea">
+    <meta property="og:description" content="I migliori locali per feste di laurea a Padova">
+    <meta property="og:image" content="/assets/images/og-image.jpg">
+    <meta property="og:url" content="https://festalaurea.eu">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .hover-scale { transition: transform 0.2s; }
+        .hover-scale:hover { transform: scale(1.02); }
+        .fade-in { opacity: 0; animation: fadeIn 0.5s ease-in forwards; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .dashboard-hidden { display: none; }
+        .dashboard-visible { display: block; }
+        .dashboard-nav { display: flex; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; }
+        .dashboard-tab { 
+            padding: 0.75rem 1.5rem; border-radius: 0.5rem; 
+            background: #f3f4f6; cursor: pointer; transition: all 0.3s;
+            border: none; font-weight: 500;
+        }
+        .dashboard-tab.active, .dashboard-tab:hover { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white;
+        }
+        .dashboard-card { 
+            background: white; border-radius: 0.75rem; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+            padding: 1.5rem; margin-bottom: 1.5rem;
+        }
+        .modal { backdrop-filter: blur(4px); }
+        .venue-card { transition: all 0.3s ease; }
+        .venue-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .rating-stars { color: #fbbf24; }
+        .section-content { min-height: 400px; }
+        
+        @media (max-width: 768px) {
+            .dashboard-nav { justify-content: center; }
+            .dashboard-tab { flex: 1; text-align: center; min-width: 120px; }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-md fixed w-full top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="gradient-bg text-white px-3 py-1 rounded-lg font-bold text-lg">FL</div>
+                    <h1 class="text-2xl font-bold text-gray-800">FestaLaurea</h1>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#" onclick="showSection('home')" class="text-gray-600 hover:text-blue-600 transition-colors">Home</a>
+                    <a href="#" onclick="showSection('venues')" class="text-gray-600 hover:text-blue-600 transition-colors">Locali</a>
+                    <a href="#" onclick="showSection('how-it-works')" class="text-gray-600 hover:text-blue-600 transition-colors">Come funziona</a>
+                    <a href="#" onclick="showSection('faq')" class="text-gray-600 hover:text-blue-600 transition-colors">FAQ</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+                        <button onclick="showModal('loginModal')" class="text-gray-600 hover:text-blue-600 transition-colors">Accedi</button>
+                        <button onclick="showModal('registerModal')" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">Registrati</button>
+                    </div>
+                    <div id="user-menu" class="hidden">
+                        <div class="relative">
+                            <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
+                                <span id="user-name">Mario Rossi</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                                <a href="#" onclick="showSection('dashboard')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                                <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- HOME SECTION -->
+        <section id="home" class="section-content">
+            <!-- Hero Section -->
+            <div class="gradient-bg text-white py-20">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="text-5xl font-bold mb-6 floating">🎓 La tua festa di laurea perfetta</h2>
+                    <p class="text-xl mb-8 opacity-90">Prenota nei migliori locali di Padova con un click</p>
+                    
+                    <!-- Search Bar -->
+                    <div class="bg-white rounded-lg p-6 max-w-4xl mx-auto shadow-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Data festa</label>
+                                <input type="date" id="searchDate" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Persone</label>
+                                <select id="searchGuests" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Seleziona</option>
+                                    <option value="10-20">10-20 persone</option>
+                                    <option value="20-30">20-30 persone</option>
+                                    <option value="30-50">30-50 persone</option>
+                                    <option value="50+">50+ persone</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Budget</label>
+                                <select id="searchBudget" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Qualsiasi</option>
+                                    <option value="0-25">€0-25 a persona</option>
+                                    <option value="25-40">€25-40 a persona</option>
+                                    <option value="40-60">€40-60 a persona</option>
+                                    <option value="60+">€60+ a persona</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="searchVenues()" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 font-bold transition-opacity">
+                                    🔍 Cerca Locali
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Features Section -->
+            <div class="py-20 bg-white">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-16">
+                        <h3 class="text-4xl font-bold text-gray-800 mb-4">Perché scegliere FestaLaurea?</h3>
+                        <p class="text-xl text-gray-600">La piattaforma più completa per organizzare la tua festa di laurea</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center p-6 hover-scale">
+                            <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-search text-white text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3">Ricerca Avanzata</h4>
+                            <p class="text-gray-600">Trova il locale perfetto con filtri per data, budget, numero persone e dipartimento universitario</p>
+                        </div>
+                        
+                        <div class="text-center p-6 hover-scale">
+                            <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-credit-card text-white text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3">Pagamento Sicuro</h4>
+                            <p class="text-gray-600">Prenota con deposito online sicuro. Pagamento protetto e conferma immediata</p>
+                        </div>
+                        
+                        <div class="text-center p-6 hover-scale">
+                            <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-star text-white text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3">Solo Locali Verificati</h4>
+                            <p class="text-gray-600">Collaboriamo solo con i migliori locali di Padova, verificati e con recensioni autentiche</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Popular Venues -->
+            <div class="py-20 bg-gray-50">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-16">
+                        <h3 class="text-4xl font-bold text-gray-800 mb-4">Locali in Evidenza</h3>
+                        <p class="text-xl text-gray-600">I più amati dagli studenti di Padova</p>
+                    </div>
+                    
+                    <div id="featuredVenues" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Venues will be loaded here -->
+                    </div>
+                    
+                    <div class="text-center mt-12">
+                        <button onclick="showSection('venues')" class="gradient-bg text-white px-8 py-3 rounded-lg hover:opacity-90 font-bold transition-opacity">
+                            Vedi Tutti i Locali
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard" class="section-content dashboard-hidden py-20">
+            <div class="container mx-auto px-4">
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800">Benvenuto nella tua Dashboard 👋</h2>
+                        <p class="text-gray-600">Gestisci le tue prenotazioni e pianifica la tua festa di laurea perfetta</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-nav">
+                    <button class="dashboard-tab active" onclick="showDashboardTab('my-bookings')">
+                        📅 Le Mie Prenotazioni
+                    </button>
+                    <button class="dashboard-tab" onclick="showDashboardTab('favorites')">
+                        💝 Preferiti
+                    </button>
+                    <button class="dashboard-tab" onclick="showDashboardTab('profile')">
+                        👤 Profilo
+                    </button>
+                    <button class="dashboard-tab" onclick="showDashboardTab('settings')">
+                        ⚙️ Impostazioni
+                    </button>
+                </div>
+
+                <!-- My Bookings Tab -->
+                <div id="my-bookings" class="dashboard-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="dashboard-card">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold">Prenotazioni Attive</h3>
+                                <button onclick="showSection('venues')" class="gradient-bg text-white px-4 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity">
+                                    + Nuova Prenotazione
+                                </button>
+                            </div>
+                            <div id="activeBookings">
+                                <!-- Active bookings will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3 class="text-xl font-bold mb-6">Storico Prenotazioni</h3>
+                            <div id="pastBookings">
+                                <!-- Past bookings will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Favorites Tab -->
+                <div id="favorites" class="dashboard-content" style="display:none;">
+                    <div class="dashboard-card">
+                        <h3 class="text-xl font-bold mb-6">I Tuoi Locali Preferiti ❤️</h3>
+                        <div id="favoriteVenues" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Favorite venues will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="profile" class="dashboard-content" style="display:none;">
+                    <div class="dashboard-card">
+                        <h3 class="text-xl font-bold mb-6">Il Tuo Profilo</h3>
+                        <form id="profileForm" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Nome Completo</label>
+                                    <input type="text" id="profileName" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                                    <input type="email" id="profileEmail" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Telefono</label>
+                                    <input type="tel" id="profilePhone" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Dipartimento</label>
+                                    <select id="profileDepartment" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Seleziona dipartimento</option>
+                                        <option value="ingegneria">Ingegneria</option>
+                                        <option value="medicina">Medicina</option>
+                                        <option value="economia">Economia</option>
+                                        <option value="lettere">Lettere e Filosofia</option>
+                                        <option value="scienze">Scienze</option>
+                                        <option value="giurisprudenza">Giurisprudenza</option>
+                                        <option value="psicologia">Psicologia</option>
+                                        <option value="scienze-politiche">Scienze Politiche</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Anno di Laurea</label>
+                                    <select id="profileGradYear" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Seleziona anno</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2026">2026</option>
+                                        <option value="2027">2027</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                                    Salva Modifiche
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings" class="dashboard-content" style="display:none;">
+                    <div class="dashboard-card">
+                        <h3 class="text-xl font-bold mb-6">Impostazioni Account</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-bold mb-3">Notifiche Email</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="emailBookings" class="mr-2" checked>
+                                        <span>Conferme prenotazioni</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="emailPromotions" class="mr-2">
+                                        <span>Offerte speciali</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="emailReminders" class="mr-2" checked>
+                                        <span>Promemoria eventi</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold mb-3">Privacy</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="profilePublic" class="mr-2">
+                                        <span>Profilo pubblico</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="shareReviews" class="mr-2" checked>
+                                        <span>Condividi le mie recensioni</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4 border-t">
+                                <button onclick="changePassword()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors mr-4">
+                                    Cambia Password
+                                </button>
+                                <button onclick="deleteAccount()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                                    Elimina Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- VENUES SECTION -->
+        <section id="venues" class="section-content dashboard-hidden py-20">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Locali Partner</h2>
+                    <p class="text-xl text-gray-600">Scopri i migliori locali di Padova per la tua festa di laurea</p>
+                </div>
+                
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Tipo Locale</label>
+                            <select id="filterType" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Tutti</option>
+                                <option value="restaurant">Ristorante</option>
+                                <option value="pub">Pub</option>
+                                <option value="club">Locale notturno</option>
+                                <option value="outdoor">All'aperto</option>
+                                <option value="agriturismo">Agriturismo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Zona</label>
+                            <select id="filterZone" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Tutta Padova</option>
+                                <option value="centro">Centro Storico</option>
+                                <option value="universita">Zona Università</option>
+                                <option value="stazione">Zona Stazione</option>
+                                <option value="periferia">Periferia</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Budget</label>
+                            <select id="filterPrice" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Qualsiasi</option>
+                                <option value="0-25">€0-25 a persona</option>
+                                <option value="25-40">€25-40 a persona</option>
+                                <option value="40-60">€40-60 a persona</option>
+                                <option value="60+">€60+ a persona</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Capacità</label>
+                            <select id="filterCapacity" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Qualsiasi</option>
+                                <option value="10-20">10-20 persone</option>
+                                <option value="20-30">20-30 persone</option>
+                                <option value="30-50">30-50 persone</option>
+                                <option value="50+">50+ persone</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="filterVenues()" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 font-bold transition-opacity">
+                                Applica Filtri
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Venues Grid -->
+                <div id="venuesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Venues will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Accedi</h3>
+                <p class="text-gray-600">Accedi al tuo account FestaLaurea</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="loginEmail" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="loginPassword" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <span class="text-sm">Ricordami</span>
+                    </label>
+                    <a href="#" class="text-sm text-blue-600 hover:underline">Password dimenticata?</a>
+                </div>
+                <button type="submit" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 font-bold transition-opacity">
+                    Accedi
+                </button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <p class="text-sm text-gray-600">
+                    Non hai un account? 
+                    <a href="#" onclick="closeModal('loginModal'); showModal('registerModal')" class="text-blue-600 hover:underline">Registrati qui</a>
+                </p>
+            </div>
+            
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Registrati</h3>
+                <p class="text-gray-600">Crea il tuo account FestaLaurea</p>
+            </div>
+            
+            <form id="registerForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Nome Completo</label>
+                    <input type="text" id="registerName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email Universitaria</label>
+                    <input type="email" id="registerEmail" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="nome.cognome@studenti.unipd.it">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Telefono</label>
+                    <input type="tel" id="registerPhone" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="+39 333 123 4567">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Dipartimento</label>
+                    <select id="registerDepartment" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Seleziona il tuo dipartimento</option>
+                        <option value="ingegneria">Ingegneria</option>
+                        <option value="medicina">Medicina</option>
+                        <option value="economia">Economia</option>
+                        <option value="lettere">Lettere e Filosofia</option>
+                        <option value="scienze">Scienze</option>
+                        <option value="giurisprudenza">Giurisprudenza</option>
+                        <option value="psicologia">Psicologia</option>
+                        <option value="scienze-politiche">Scienze Politiche</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="registerPassword" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Conferma Password</label>
+                    <input type="password" id="registerConfirmPassword" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" required class="mr-2">
+                        <span class="text-sm">Accetto i <a href="#" class="text-blue-600 hover:underline">Termini di Servizio</a> e la <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></span>
+                    </label>
+                </div>
+                <button type="submit" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 font-bold transition-opacity">
+                    Registrati
+                </button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <p class="text-sm text-gray-600">
+                    Hai già un account? 
+                    <a href="#" onclick="closeModal('registerModal'); showModal('loginModal')" class="text-blue-600 hover:underline">Accedi qui</a>
+                </p>
+            </div>
+            
+            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentVenue = null;
+        let stripe = null;
+
+        // Initialize Stripe
+        if (typeof Stripe !== 'undefined') {
+            stripe = Stripe('pk_test_your_stripe_publishable_key_here');
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            loadFeaturedVenues();
+            setupEventListeners();
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('searchDate').min = today;
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('profileForm').addEventListener('submit', handleProfileUpdate);
+        }
+
+        // Authentication functions
+        function checkAuthStatus() {
+            const token = localStorage.getItem('authToken');
+            const userData = localStorage.getItem('userData');
+            
+            if (token && userData) {
+                currentUser = JSON.parse(userData);
+                showAuthenticatedState();
+            } else {
+                showUnauthenticatedState();
+            }
+        }
+
+        function showAuthenticatedState() {
+            document.getElementById('auth-buttons').classList.add('hidden');
+            document.getElementById('user-menu').classList.remove('hidden');
+            document.getElementById('user-name').textContent = currentUser.name;
+            
+            loadUserBookings();
+            populateProfile();
+        }
+
+        function showUnauthenticatedState() {
+            document.getElementById('auth-buttons').classList.remove('hidden');
+            document.getElementById('user-menu').classList.add('hidden');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userData', JSON.stringify(data.user));
+                    currentUser = data.user;
+                    
+                    closeModal('loginModal');
+                    showAuthenticatedState();
+                    showNotification('Login effettuato con successo!', 'success');
+                    
+                    // Redirect based on user type
+                    if (data.user.type === 'venue_owner') {
+                        window.location.href = '/venue-manager.html';
+                    }
+                } else {
+                    showNotification(data.message || 'Errore durante il login', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification('Errore di connessione', 'error');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('registerName').value,
+                email: document.getElementById('registerEmail').value,
+                phone: document.getElementById('registerPhone').value,
+                department: document.getElementById('registerDepartment').value,
+                password: document.getElementById('registerPassword').value,
+                confirmPassword: document.getElementById('registerConfirmPassword').value
+            };
+            
+            if (formData.password !== formData.confirmPassword) {
+                showNotification('Le password non coincidono', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeModal('registerModal');
+                    showNotification('Registrazione completata con successo!', 'success');
+                    showModal('loginModal');
+                } else {
+                    showNotification(data.message || 'Errore durante la registrazione', 'error');
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                showNotification('Errore di connessione', 'error');
+            }
+        }
+
+        async function handleProfileUpdate(e) {
+            e.preventDefault();
+            
+            if (!currentUser) return;
+            
+            const formData = {
+                name: document.getElementById('profileName').value,
+                phone: document.getElementById('profilePhone').value,
+                department: document.getElementById('profileDepartment').value,
+                graduation_year: document.getElementById('profileGradYear').value
+            };
+            
+            try {
+                const response = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update local user data
+                    currentUser = { ...currentUser, ...formData };
+                    localStorage.setItem('userData', JSON.stringify(currentUser));
+                    document.getElementById('user-name').textContent = currentUser.name;
+                    showNotification('Profilo aggiornato con successo!', 'success');
+                } else {
+                    showNotification(data.message || 'Errore durante l\'aggiornamento', 'error');
+                }
+            } catch (error) {
+                console.error('Profile update error:', error);
+                showNotification('Errore di connessione', 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            currentUser = null;
+            showUnauthenticatedState();
+            showSection('home');
+            showNotification('Logout effettuato', 'success');
+        }
+
+        // Navigation functions
+        function showSection(sectionName) {
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.add('dashboard-hidden');
+                section.classList.remove('dashboard-visible');
+            });
+            
+            const targetSection = document.getElementById(sectionName);
+            if (targetSection) {
+                targetSection.classList.remove('dashboard-hidden');
+                targetSection.classList.add('dashboard-visible');
+            }
+            
+            switch(sectionName) {
+                case 'venues':
+                    loadVenues();
+                    break;
+                case 'dashboard':
+                    if (!currentUser) {
+                        showModal('loginModal');
+                        return;
+                    }
+                    loadUserBookings();
+                    break;
+            }
+        }
+
+        function showDashboardTab(tabName) {
+            document.querySelectorAll('.dashboard-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.dashboard-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        // Venue functions
+        async function loadFeaturedVenues() {
+            try {
+                const response = await fetch('/api/venues/featured');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayFeaturedVenues(data.venues);
+                } else {
+                    displaySampleFeaturedVenues();
+                }
+            } catch (error) {
+                console.error('Error loading featured venues:', error);
+                displaySampleFeaturedVenues();
+            }
+        }
+
+        async function loadVenues() {
+            try {
+                const response = await fetch('/api/venues');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayVenues(data.venues);
+                } else {
+                    displaySampleVenues();
+                }
+            } catch (error) {
+                console.error('Error loading venues:', error);
+                displaySampleVenues();
+            }
+        }
+
+        function displayFeaturedVenues(venues) {
+            const container = document.getElementById('featuredVenues');
+            
+            if (!venues || venues.length === 0) {
+                displaySampleFeaturedVenues();
+                return;
+            }
+            
+            container.innerHTML = venues.map(venue => createVenueCard(venue)).join('');
+        }
+
+        function displaySampleFeaturedVenues() {
+            const container = document.getElementById('featuredVenues');
+            container.innerHTML = `
+                <div class="venue-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nuovo Locale" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold mb-2">🆕 Nuovi Locali in Arrivo</h4>
+                        <p class="text-gray-600 mb-3">I nostri partner stanno preparando locali fantastici per le tue feste!</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">Prezzi competitivi</span>
+                            <div class="flex items-center">
+                                <span class="text-gray-500">Nuovo</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-sm text-gray-500">
+                            <i class="fas fa-users mr-1"></i>
+                            Tutte le capacità
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createVenueCard(venue) {
+            const ratingDisplay = venue.rating_display || 'Nuovo';
+            const reviewsText = venue.reviews_text || 'Nessuna recensione';
+            
+            return `
+                <div class="venue-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="showVenueDetail(${venue.id})">
+                    <img src="${venue.images?.[0] || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}" alt="${venue.name}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold mb-2">${venue.name}</h4>
+                        <p class="text-gray-600 mb-3">${venue.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">€${venue.price_min}-${venue.price_max}/persona</span>
+                            <div class="flex items-center">
+                                ${ratingDisplay !== 'Nuovo' ? `
+                                    <i class="fas fa-star rating-stars mr-1"></i>
+                                    <span>${ratingDisplay}</span>
+                                ` : `
+                                    <span class="text-blue-600 font-semibold">Nuovo</span>
+                                `}
+                            </div>
+                        </div>
+                        <div class="mt-3 text-sm text-gray-500">
+                            <i class="fas fa-users mr-1"></i>
+                            ${venue.capacity_min}-${venue.capacity_max} persone
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400">
+                            ${reviewsText}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // User data functions
+        async function loadUserBookings() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch('/api/bookings/user', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayUserBookings(data.bookings);
+                } else {
+                    displayEmptyBookings();
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                displayEmptyBookings();
+            }
+        }
+
+        function displayUserBookings(bookings) {
+            const activeContainer = document.getElementById('activeBookings');
+            const pastContainer = document.getElementById('pastBookings');
+            
+            const now = new Date();
+            const activeBookings = bookings.filter(b => new Date(b.event_date) >= now);
+            const pastBookings = bookings.filter(b => new Date(b.event_date) < now);
+            
+            activeContainer.innerHTML = activeBookings.length > 0 ? 
+                activeBookings.map(booking => createBookingCard(booking, true)).join('') :
+                '<p class="text-gray-500 text-center py-8">Nessuna prenotazione attiva</p>';
+            
+            pastContainer.innerHTML = pastBookings.length > 0 ? 
+                pastBookings.map(booking => createBookingCard(booking, false)).join('') :
+                '<p class="text-gray-500 text-center py-8">Nessuna prenotazione passata</p>';
+        }
+
+        function displayEmptyBookings() {
+            document.getElementById('activeBookings').innerHTML = '<p class="text-gray-500 text-center py-8">Nessuna prenotazione attiva</p>';
+            document.getElementById('pastBookings').innerHTML = '<p class="text-gray-500 text-center py-8">Nessuna prenotazione passata</p>';
+        }
+
+        function createBookingCard(booking, isActive) {
+            const statusColors = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'confirmed': 'bg-green-100 text-green-800',
+                'cancelled': 'bg-red-100 text-red-800',
+                'completed': 'bg-blue-100 text-blue-800'
+            };
+            
+            const statusText = {
+                'pending': 'In attesa',
+                'confirmed': 'Confermata',
+                'cancelled': 'Annullata',
+                'completed': 'Completata'
+            };
+            
+            return `
+                <div class="border rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="font-bold">${booking.venue_name}</h4>
+                            <p class="text-sm text-gray-600">${new Date(booking.event_date).toLocaleDateString('it-IT')} alle ${booking.event_time}</p>
+                        </div>
+                        <span class="px-2 py-1 rounded-full text-xs ${statusColors[booking.status] || 'bg-gray-100 text-gray-800'}">
+                            ${statusText[booking.status] || booking.status}
+                        </span>
+                    </div>
+                    <div class="text-sm text-gray-600 mb-3">
+                        <span class="mr-4"><i class="fas fa-users mr-1"></i>${booking.guests} ospiti</span>
+                        <span class="mr-4"><i class="fas fa-euro-sign mr-1"></i>€${booking.total_amount}</span>
+                    </div>
+                    ${isActive && booking.status !== 'cancelled' ? `
+                        <div class="flex space-x-2">
+                            <button onclick="viewBookingDetails(${booking.id})" class="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors">
+                                Dettagli
+                            </button>
+                            ${booking.status === 'confirmed' ? `
+                                <button onclick="cancelBooking(${booking.id})" class="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors">
+                                    Annulla
+                                </button>
+                            ` : ''}
+                        </div>
+                    ` : `
+                        ${booking.can_review ? `
+                            <button onclick="showReviewModal(${booking.venue_id}, ${booking.id})" class="px-3 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors">
+                                Lascia Recensione
+                            </button>
+                        ` : ''}
+                    `}
+                </div>
+            `;
+        }
+
+        function populateProfile() {
+            if (!currentUser) return;
+            
+            document.getElementById('profileName').value = currentUser.name || '';
+            document.getElementById('profileEmail').value = currentUser.email || '';
+            document.getElementById('profilePhone').value = currentUser.phone || '';
+            document.getElementById('profileDepartment').value = currentUser.department || '';
+            document.getElementById('profileGradYear').value = currentUser.graduation_year || '';
+        }
+
+        // Utility functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            } text-white`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.add('hidden');
+            }
+        });
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#user-menu')) {
+                document.getElementById('user-dropdown').classList.add('hidden');
+            }
+        });
+
+        // Search and filter functions
+        async function searchVenues() {
+            const filters = {
+                date: document.getElementById('searchDate').value,
+                guests: document.getElementById('searchGuests').value,
+                budget: document.getElementById('searchBudget').value
+            };
+            
+            showSection('venues');
+            // Apply filters and load venues
+            await loadVenues();
+        }
+
+        async function filterVenues() {
+            const filters = {
+                type: document.getElementById('filterType').value,
+                zone: document.getElementById('filterZone').value,
+                price: document.getElementById('filterPrice').value,
+                capacity: document.getElementById('filterCapacity').value
+            };
+            
+            try {
+                const queryParams = new URLSearchParams(filters).toString();
+                const response = await fetch(`/api/venues?${queryParams}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayVenues(data.venues);
+                } else {
+                    displaySampleVenues();
+                }
+            } catch (error) {
+                console.error('Error filtering venues:', error);
+                displaySampleVenues();
+            }
+        }
+
+        function displayVenues(venues) {
+            const container = document.getElementById('venuesGrid');
+            
+            if (!venues || venues.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500 text-lg">Nessun locale trovato con i filtri selezionati</p></div>';
+                return;
+            }
+            
+            container.innerHTML = venues.map(venue => createVenueCard(venue)).join('');
+        }
+
+        function displaySampleVenues() {
+            const container = document.getElementById('venuesGrid');
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-store text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Locali in Arrivo!</h3>
+                        <p class="text-gray-600 mb-4">I nostri partner stanno preparando dei locali fantastici per le tue feste di laurea.</p>
+                        <button onclick="showModal('registerModal')" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                            Registrati per le Novità
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Placeholder functions for future implementation
+        function showVenueDetail(venueId) {
+            showNotification('Funzionalità in sviluppo', 'info');
+        }
+
+        function viewBookingDetails(bookingId) {
+            showNotification('Dettagli prenotazione in sviluppo', 'info');
+        }
+
+        function cancelBooking(bookingId) {
+            if (confirm('Sei sicuro di voler annullare questa prenotazione?')) {
+                showNotification('Funzionalità annullamento in sviluppo', 'info');
+            }
+        }
+
+        function showReviewModal(venueId, bookingId) {
+            showNotification('Sistema recensioni in sviluppo', 'info');
+        }
+
+        function changePassword() {
+            showNotification('Cambio password in sviluppo', 'info');
+        }
+
+        function deleteAccount() {
+            if (confirm('Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata.')) {
+                showNotification('Eliminazione account in sviluppo', 'info');
+            }
+        }
+    </script>
+</body>
+</html>
